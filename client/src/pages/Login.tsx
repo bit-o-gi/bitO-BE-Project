@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import kakaoLoginImage from "../assets/images/kakao_login.png";
 import axios from "axios";
 import tw from "tailwind-styled-components";
-import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function Login() {
-  const dispatch = useDispatch();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
@@ -23,17 +21,14 @@ function Login() {
   };
 
   useEffect(() => {
-    console.log("queryParams", queryParams);
     if (queryParams?.get("code")) {
       const params = new URLSearchParams();
       params.append("code", queryParams.get("code") || "");
       axios
         .post("/api/v1/oauth/kakao/token", params)
         .then((res) => {
-          // dispatch(setAccessToken(res.data.access_token));
           sessionStorage.setItem("accessToken", res.data.access_token);
           console.log("accessToken", res.data.access_token);
-          // dispatch(setRefreshToken(res.data.refresh_token));
           handleGetUserInfo(res.data.access_token);
         })
         .catch((err) => {
