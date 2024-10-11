@@ -1,29 +1,28 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import {useSelector, useDispatch} from 'react-redux';
-import {RootState} from '../store';
-import {toggleSidebar} from '../store/reducer/reducerSidebar';
-import {FaBars, FaTimes} from 'react-icons/fa';
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store";
+import { toggleSidebar } from "../store/reducer/reducerSidebar";
+import { FaBars, FaTimes } from "react-icons/fa";
 import tw from "tailwind-styled-components";
 
 const Sidebar = () => {
-    const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
-    const dispatch = useDispatch();
+  const isSidebarOpen = useSelector((state: RootState) => state.sidebar.isOpen);
+  const dispatch = useDispatch();
 
-    return (
-        <>
-            <ToggleButton onClick={() => dispatch(toggleSidebar())}>
-                {isSidebarOpen ? <FaTimes/> : <FaBars/>}
-            </ToggleButton>
-            {isSidebarOpen && <Overlay onClick={() => dispatch(toggleSidebar())}/>}
-            {isSidebarOpen && (
-                <SidebarContainer>
-                    <StyledLink to="/">Home</StyledLink>
-                    <StyledLink to="/">Anniversary</StyledLink>
-                </SidebarContainer>
-            )}
-        </>
-    );
+  return (
+    <>
+      <ToggleButton onClick={() => dispatch(toggleSidebar())}>{isSidebarOpen ? <FaTimes /> : <FaBars />}</ToggleButton>
+      {isSidebarOpen && <Overlay onClick={() => dispatch(toggleSidebar())} />}
+      {isSidebarOpen && (
+        <SidebarContainer>
+          <StyledLink to="/">Home</StyledLink>
+          <StyledLink to="/">Anniversary</StyledLink>
+          <StyledLink to="/Schedule">Schedule</StyledLink>
+        </SidebarContainer>
+      )}
+    </>
+  );
 };
 
 const ToggleButton = tw.button`
@@ -56,6 +55,7 @@ const SidebarContainer = tw.div`
     shadow-2xl
     transition-transform
     duration-300
+    z-20
 `;
 
 const StyledLink = tw(Link)`
@@ -72,7 +72,7 @@ const Overlay = tw.div`
     inset-0
     bg-black
     opacity-50
-    z-5
+    z-10
 `;
 
 export default Sidebar;
