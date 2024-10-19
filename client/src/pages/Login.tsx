@@ -4,7 +4,16 @@ import axios from "axios";
 import tw from "tailwind-styled-components";
 import {useDispatch} from "react-redux";
 import {useLocation, useNavigate} from "react-router-dom";
-
+import {
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    Typography,
+    Input,
+    Checkbox,
+    Button,
+} from "@material-tailwind/react";
 
 function Login() {
     const dispatch = useDispatch();
@@ -28,9 +37,7 @@ function Login() {
             axios.post('/api/v1/oauth/kakao/token', params)
                 .then((res) => {
                     console.log('token', res.data);
-                    // dispatch(setAccessToken(res.data.access_token));
                     sessionStorage.setItem('accessToken', res.data.access_token);
-                    // dispatch(setRefreshToken(res.data.refresh_token));
                     handleGetUserInfo(res.data.access_token);
                 })
                 .catch((err) => {
@@ -56,14 +63,17 @@ function Login() {
     }
 
     return (
-        <Container>
-            <Content>
-                <Title>Welcome, Login!</Title>
-                <ImgButton src={kakaoLoginImage} alt="kakaoLogin" onClick={handleKakaoLoginBtn}/>
-            </Content>
-        </Container>);
-}
 
+        <Container>
+            <Card className="w-96">
+                <Content>
+                    <Title>Welcome, Login!</Title>
+                    <ImgButton src={kakaoLoginImage} alt="kakaoLogin" onClick={handleKakaoLoginBtn}/>
+                </Content>
+            </Card>
+        </Container>
+    );
+}
 
 const ImgButton = tw.img`
     cursor-pointer

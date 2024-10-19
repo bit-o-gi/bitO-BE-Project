@@ -7,6 +7,7 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from "react-redux";
 import store from './store/index';
 import axios from "axios";
+import {ThemeProvider} from "@material-tailwind/react";
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -16,7 +17,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
         <React.StrictMode>
-            <App/>
+            <ThemeProvider>
+                <App/>
+            </ThemeProvider>
         </React.StrictMode>
     </Provider>
 );
