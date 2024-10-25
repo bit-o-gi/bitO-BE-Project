@@ -1,19 +1,41 @@
+import React, {useEffect} from "react";
+import styled from "styled-components";
+import Sidebar from "../components/Sidebar";
+import {useDispatch} from 'react-redux';
+import {setAccessToken} from "../store/reducer/reducerUser";
 import tw from "tailwind-styled-components";
+import {AnniversaryCard} from "../components/AnniversaryCard";
+import {DdayCard} from "../components/DdayCard";
 
 const Main = () => {
-  return (
-    <Section>
-      <Title>시작한지</Title>
-      <Countdown>100일</Countdown>
-    </Section>
-  );
+    return (
+        <MainContainer>
+            <Sidebar/>
+            <Content>
+                {/*<Section>*/}
+                <DdayCard/>
+                <AnniversaryCard/>
+                {/*</Section>*/}
+            </Content>
+        </MainContainer>
+    );
 };
 
-const Title = tw.h1`
-    text-4xl
-    font-bold
-    p-4
+const MainContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 `;
+
+const Content = styled.div`
+    flex: 1;
+    display: flex;
+    background-color: #f9fafb;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+`;
+
 
 const Section = tw.section`
     mt-8
@@ -26,10 +48,5 @@ const Section = tw.section`
     w-full
 `;
 
-const Countdown = tw.h3`
-    text-2xl
-    font-semibold
-    text-pink-500
-`;
 
 export default Main;
