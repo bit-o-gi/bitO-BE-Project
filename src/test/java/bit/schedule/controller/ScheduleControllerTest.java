@@ -1,8 +1,10 @@
 package bit.schedule.controller;
 
+import bit.exception.GlobalExceptionHandler;
 import bit.schedule.domain.Schedule;
 import bit.schedule.dto.ScheduleRequest;
 import bit.schedule.dto.ScheduleResponse;
+import bit.schedule.exception.ScheduleNotFoundException;
 import bit.schedule.service.ScheduleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -28,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = ScheduleController.class)
+@Import(GlobalExceptionHandler.class)
 class ScheduleControllerTest {
 
     @Autowired
@@ -103,21 +107,49 @@ class ScheduleControllerTest {
         ScheduleResponse response = new ScheduleResponse(schedule);
         when(scheduleService.saveSchedule(any(ScheduleRequest.class))).thenReturn(response);
         List<ScheduleRequest> scheduleRequests = getNewScheduleRequests();
+        List<String> errorMessages = List.of(
+                "{\"userId\":\"유저 아이디가 필요합니다.\"}",
+                "{\"title\":\"제목이 필요합니다.\"}",
+                "{\"content\":\"내용이 필요합니다.\"}",
+                "{\"startDateTime\":\"시작 일시가 필요합니다.\"}",
+                "{\"endDateTime\":\"종료 일시가 필요합니다.\"}"
+        );
         //When
         //Then
-        scheduleRequests.forEach((request) -> {
+        for (int i = 0; i < scheduleRequests.size(); i++) {
+            ScheduleRequest request = scheduleRequests.get(i);
+            String expectedErrorMessage = errorMessages.get(i);
+
             try {
+                System.out.println("request = " + request);
                 mockMvc.perform(
                                 post("/api/v1/schedule")
                                         .contentType("application/json")
                                         .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isBadRequest())
+                        .andExpect(content().json(expectedErrorMessage))
                         .andDo(print());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        });
+        }
     }
+
+    @DisplayName("존재하지 않는 스케줄에 접근하면, 에러가 발생한다")
+    @Test
+    void getScheduleNotFoundTest() throws Exception {
+        //Given
+        when(scheduleService.getSchedule(0L)).thenThrow(new ScheduleNotFoundException());
+        //When
+        //Then
+        mockMvc.perform(
+                        get("/api/v1/schedule/0")
+                                .contentType("application/json"))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(content().string("해당 스케줄이 존재하지 않습니다."));
+    }
+
 
     @DisplayName("스케줄 수정 테스트")
     @Test

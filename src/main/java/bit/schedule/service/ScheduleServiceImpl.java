@@ -3,8 +3,8 @@ package bit.schedule.service;
 import bit.schedule.domain.Schedule;
 import bit.schedule.dto.ScheduleRequest;
 import bit.schedule.dto.ScheduleResponse;
+import bit.schedule.exception.ScheduleNotFoundException;
 import bit.schedule.repository.ScheduleRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +59,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private Schedule findScheduleById(Long scheduleId) {
         return scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new EntityNotFoundException("스케줄을 찾지 못했습니다."));
+                .orElseThrow(ScheduleNotFoundException::new);
     }
 }
