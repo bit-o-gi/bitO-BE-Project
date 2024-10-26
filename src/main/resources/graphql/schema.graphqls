@@ -10,8 +10,8 @@ type Query{
     getBoard(id: ID): BoardReqDto
     getBoards: [BoardReqDto]
     delete(id: ID) : Boolean
-    getAnniversary: AnResdto
-    getListAnniversary(memberId: ID): [AnResdto]
+    getAnniversary: AnResDto
+    getListAnniversary(memberId: ID): [AnResDto]
 }
 
 type Mutation{
@@ -20,27 +20,27 @@ type Mutation{
     UpdateBoard(boardInput: BoardInput): BoardReqDto
     delete(id: ID): Boolean
     #    기념일
-    createAnniversary(anDto : Andto) : AnResdto
-    updateAnniversary(anDto : Andto) : AnResdto
-    deleteBoard(anDto : Andto) : AnResdto
+    createAnniversary(anDto : AnDto) : AnResDto
+    updateAnniversary(anDto : AnDto) : AnResDto
+    deleteBoard(anDto : AnDto) : AnResDto
 
 }
 #   기념일
-input Andto{
-    id : ID
-    writetime : String
-    updatetime : String
-    title : String
-    withpeople : String
-    content : String
+input AnDto {
+    writeTime: String     # 대소문자 일치
+    updateTime: String    # 대소문자 일치
+    title: String
+    withPeople: String    # 대소문자 일치
+    writer: String
+    content: String
 }
 
-type AnResdto{
+type AnResDto{
     id : ID
-    writetime : String
-    updatetime : String
+    writeTime : String
+    updateTime : String
     title : String
-    withpeople : String
+    withPeople : String
     content : String
 }
 

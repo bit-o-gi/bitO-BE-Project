@@ -1,25 +1,34 @@
 package bit.anniversary.dto;
 
+import java.time.LocalDateTime;
+
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import lombok.Builder;
+import lombok.Getter;
 
-@Builder
+@Getter
 public class AnResDto {
 
-	private final Long id;
+	private Long id;
 
-	private final String writetime;
+	private String writeTime;
 
-	private final String title;
+	private String title;
 
-	private final String withpeople;
+	private String writer;
 
-	private final String content;
+	private String withPeople;
 
-	private static ModelMapper modelMapper = new ModelMapper();
+	private String updateTime;
 
-	public static AnResDto of(AnDto anDto) {
+	private String content;
+
+	private LocalDateTime anniversaryDate;
+
+	public static AnResDto of(AnDto anDto,ModelMapper modelMapper) {
 		return modelMapper.map(anDto, AnResDto.class);
 	}
 

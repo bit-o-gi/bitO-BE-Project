@@ -1,8 +1,10 @@
 package bit.board.dto;
 
-import bit.board.entity.Board;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import bit.board.entity.Board;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Component
 public class BoardDto {
 	// TODO : 글쓴 날짜 , 유저 정보 , 필요
 	private Long id;
@@ -26,7 +29,12 @@ public class BoardDto {
 
 	private String writer;
 
-	private static ModelMapper modelMapper = new ModelMapper();
+	private static ModelMapper modelMapper;
+
+	@Autowired
+	private BoardDto(ModelMapper modelMapper) {
+		BoardDto.modelMapper = modelMapper;
+	}
 
 	public Board creatBoard() {
 		return modelMapper.map(this, Board.class);
