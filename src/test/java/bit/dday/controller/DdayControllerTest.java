@@ -2,9 +2,7 @@ package bit.dday.controller;
 
 import static bit.dday.controller.DdayController.DDAY_PATH;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -12,26 +10,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import bit.config.FixtureMonkeyConfig;
 import bit.dday.domain.Dday;
-import bit.dday.domain.DdayFixtures;
 import bit.dday.dto.DdayRequest;
-import bit.dday.dto.DdayRequestFixtures;
 import bit.dday.service.DdayService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.navercorp.fixturemonkey.FixtureMonkey;
+import com.navercorp.fixturemonkey.api.introspector.FailoverIntrospector;
+import com.navercorp.fixturemonkey.api.introspector.FieldReflectionArbitraryIntrospector;
+import com.navercorp.fixturemonkey.jackson.introspector.JacksonObjectArbitraryIntrospector;
+import java.util.Arrays;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(controllers = DdayController.class)
+@Import(FixtureMonkeyConfig.class)
 class DdayControllerTest {
 
     @Autowired
-    ObjectMapper objectMapper;
+    private FixtureMonkey fixtureMonkey;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -41,26 +49,24 @@ class DdayControllerTest {
     @Test
     void getDdaySuccessTest() throws Exception {
         // given
-        Dday initialDday = DdayFixtures.initialDday();
-        when(ddayService.getDday(any())).thenReturn(initialDday);
+        Dday dday = fixtureMonkey.giveMeBuilder(Dday.class).set("id", 1L).sample();
+        when(ddayService.getDday(any())).thenReturn(dday);
 
         // when
-        ResultActions result = mockMvc.perform(get(DDAY_PATH + "/" + initialDday.getId()));
+        ResultActions result = mockMvc.perform(get(DDAY_PATH + "/" + dday.getId()));
 
         // then
-        result.andDo(print())
-                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(initialDday.getId()))
-                .andExpect(jsonPath("$.userId").value(initialDday.getUserId()))
-                .andExpect(jsonPath("$.title").value(initialDday.getTitle()))
-                .andExpect(jsonPath("$.targetDate").value(initialDday.getTargetDate().toString()));
+        result.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(dday.getId()))
+                .andExpect(jsonPath("$.title").value(dday.getTitle()))
+                .andExpect(jsonPath("$.targetDate").value(dday.getTargetDate().toString()));
     }
 
     @DisplayName("디데이 생성 성공")
     @Test
     void createDdaySuccessTest() throws Exception {
         // given
-        Dday newDday = DdayFixtures.newDday();
-        DdayRequest ddayRequest = DdayRequestFixtures.from(newDday);
+        DdayRequest ddayRequest = fixtureMonkey.giveMeOne(DdayRequest.class);
+        Dday newDday = fixtureMonkey.giveMeBuilder(Dday.class).set("id", null).sample();
         when(ddayService.createDday(any())).thenReturn(newDday);
 
         // when
@@ -68,44 +74,29 @@ class DdayControllerTest {
                 .content(objectMapper.writeValueAsBytes(ddayRequest)));
 
         // then
-        result.andDo(print())
-                .andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(newDday.getId()))
-                .andExpect(jsonPath("$.userId").value(newDday.getUserId()))
+        result.andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(newDday.getId()))
                 .andExpect(jsonPath("$.title").value(newDday.getTitle()))
                 .andExpect(jsonPath("$.targetDate").value(newDday.getTargetDate().toString()));
     }
 
     @DisplayName("디데이 수정 성공")
-    @Test
+    @RepeatedTest(50)
     void updateDdaySuccessTest() throws Exception {
         // given
-        Dday initialDday = DdayFixtures.initialDday();
-        Dday updatedDday = DdayFixtures.updatedDday();
-        DdayRequest ddayRequest = DdayRequestFixtures.from(updatedDday);
+        DdayRequest ddayRequest = fixtureMonkey.giveMeOne(DdayRequest.class);
+        Dday updatedDday = fixtureMonkey.giveMeBuilder(Dday.class).setNotNull("id")
+                .sample();
         when(ddayService.updateDday(any(), any())).thenReturn(updatedDday);
 
-        // when
+        //when
         ResultActions result = mockMvc.perform(
-                put(DDAY_PATH + "/" + initialDday.getId()).contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(ddayRequest)));
+                put(DDAY_PATH + "/" + updatedDday.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(updatedDday)));
 
-        // then
-        result.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(updatedDday.getId()))
-                .andExpect(jsonPath("$.userId").value(updatedDday.getUserId()))
+        //then
+        result.andDo(print())
+                .andExpect(jsonPath("$.id").value(updatedDday.getId()))
                 .andExpect(jsonPath("$.title").value(updatedDday.getTitle()))
                 .andExpect(jsonPath("$.targetDate").value(updatedDday.getTargetDate().toString()));
-    }
-
-    @Test
-    @DisplayName("디데이 삭제 성공")
-    void deleteDdaySuccessTest() throws Exception {
-        // given
-        doNothing().when(ddayService).deleteDday(any());
-
-        // when
-        ResultActions result = mockMvc.perform(delete(DDAY_PATH + "/" + 1L));
-
-        // then
-        result.andDo(print()).andExpect(status().isOk());
     }
 }

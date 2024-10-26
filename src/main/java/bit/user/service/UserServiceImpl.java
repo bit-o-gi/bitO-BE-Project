@@ -1,8 +1,10 @@
 package bit.user.service;
 
+import bit.couple.domain.Couple;
 import bit.user.domain.User;
 import bit.user.dto.UserDto;
 import bit.user.repository.UserRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +29,14 @@ public class UserServiceImpl implements UserService {
     public User create(UserDto userDto) {
         return userRepository.save(User.from(userDto));
     }
+
+    public void updateCouple(List<User> users, Couple couple) {
+        for (User user : users) {
+            User existingUser = userRepository.findById(user.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            existingUser.updateCouple(couple);
+            userRepository.save(existingUser);
+        }
+    }
+
 }

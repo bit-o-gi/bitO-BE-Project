@@ -1,5 +1,6 @@
 package bit.user.dto;
 
+import bit.user.domain.User;
 import bit.user.oauth.OauthPlatformStatus;
 import bit.user.oauth.kakao.domain.KakaoUserInfo;
 import java.time.LocalDateTime;
@@ -37,6 +38,14 @@ public class UserDto {
                 .nickName(info.getNickname())
                 .platform(OauthPlatformStatus.KAKAO)
                 .registerDate(info.getConnectedAt())
+                .build();
+    }
+
+    public static UserDto fromUser(User userInfo) {
+        return UserDto.builder()
+                .id(userInfo.getId())
+                .email(userInfo.getEmail())
+                .nickName(userInfo.getNickName())
                 .build();
     }
 }
