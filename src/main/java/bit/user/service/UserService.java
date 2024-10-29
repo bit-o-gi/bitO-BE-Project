@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface UserService {
 
-    User getById(long id);
+  User getById(long id);
 
-    User getByEmail(String email);
+  User getByEmail(String email);
 
-    User create(UserDto userDto);
+  User create(UserDto userDto);
 
-    boolean findByEmail(String email);
+  boolean findByEmail(String email);
 
-    void updateCouple(List<User> users, Couple couple);
+  void updateCouple(List<Long> usersId, Couple couple);
 }

@@ -13,27 +13,27 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CoupleService {
 
-    private final CoupleRepository coupleRepository;
-    private final UserService userService;
+  private final CoupleRepository coupleRepository;
+  private final UserService userService;
 
-    @Transactional
-    public void createCouple(CoupleCommand command) {
-        Couple couple = Couple.of(command.getUsers());
-        coupleRepository.save(couple);
-        userService.updateCouple(command.getUsers(), couple);
-    }
+  @Transactional
+  public void createCouple(CoupleCommand command) {
+    // ToDo. 도메인에 중복 처리 추가
+    Couple savedCouple = coupleRepository.save(Couple.of());
+    userService.updateCouple(command.getUserIds(), savedCouple);
+  }
 
-    public void approveCouple(Long coupleId) {
-        Couple couple = coupleRepository.findById(coupleId).orElseThrow(CoupleNotFoundException::new);
-        couple.approve();
-        coupleRepository.save(couple);
-    }
+  public void approveCouple(Long coupleId) {
+    Couple couple = coupleRepository.findById(coupleId).orElseThrow(CoupleNotFoundException::new);
+    couple.approve();
+    coupleRepository.save(couple);
+  }
 
-    public void deleteCouple(Long coupleId) {
-        if (!coupleRepository.existsById(coupleId)) {
-            throw new CoupleNotFoundException();
-        }
-        // TODO: 바로 지우는 대신 스케줄링 등록
-        coupleRepository.deleteById(coupleId);
+  public void deleteCouple(Long coupleId) {
+    if (!coupleRepository.existsById(coupleId)) {
+      throw new CoupleNotFoundException();
     }
+    // TODO: 바로 지우는 대신 스케줄링 등록
+    coupleRepository.deleteById(coupleId);
+  }
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,26 +20,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Couple extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OneToMany(mappedBy = "couple")
-    private List<UserEntity> users;
+  // ToDO. 추후 프론트에서 구별해서 줘야할듯 함
+  private String sender;
 
-    @OneToOne(mappedBy = "couple")
-    private Dday dday;
+  private String receiver;
 
-    private CoupleStatus status;
+  private CoupleStatus status;
 
-    public static Couple of(List<User> users) {
-        Couple couple = new Couple();
-        couple.users = UserEntity.fromList(users);
-        couple.status = CoupleStatus.CREATING;
-        return couple;
-    }
+  @Builder
+  public static Couple of() {
+    Couple couple = new Couple();
+    couple.status = CoupleStatus.CREATING;
+    return couple;
+  }
 
-    public void approve() {
-        this.status = CoupleStatus.APPROVED;
-    }
+  public void approve() {
+    this.status = CoupleStatus.APPROVED;
+  }
 }

@@ -12,31 +12,33 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public User getById(long id) {
-        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
-    }
+  public User getById(long id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+  }
 
-    public User getByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
-    }
+  public User getByEmail(String email) {
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new IllegalArgumentException("User not found"));
+  }
 
-    public boolean findByEmail(String email) {
-        return userRepository.findByEmail(email).isPresent();
-    }
+  public boolean findByEmail(String email) {
+    return userRepository.findByEmail(email).isPresent();
+  }
 
-    public User create(UserDto userDto) {
-        return userRepository.save(User.from(userDto));
-    }
+  public User create(UserDto userDto) {
+    return userRepository.save(User.from(userDto));
+  }
 
-    public void updateCouple(List<User> users, Couple couple) {
-        for (User user : users) {
-            User existingUser = userRepository.findById(user.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            existingUser.updateCouple(couple);
-            userRepository.save(existingUser);
-        }
+  public void updateCouple(List<Long> userIds, Couple couple) {
+    for (Long userID : userIds) {
+      User existingUser = userRepository.findById(userID)
+          .orElseThrow(() -> new IllegalArgumentException("User not found"));
+      User updateCoupleUser = existingUser.updateCouple(couple);
+      userRepository.save(updateCoupleUser);
     }
+  }
 
 }
