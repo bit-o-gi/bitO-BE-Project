@@ -2,7 +2,8 @@ package bit.couple.service;
 
 import static org.assertj.core.api.Assertions.*;
 
-import bit.couple.domain.CoupleFixtures;
+import bit.couple.domain.Couple;
+import bit.couple.testFixtures.CoupleFixtures;
 import bit.couple.dto.CoupleRequest;
 import bit.user.domain.User;
 import bit.user.dto.UserDto;
@@ -13,36 +14,40 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@ActiveProfiles({"test", "secret"})
 class CoupleServiceTest {
 
-    @Autowired
-    CoupleService coupleService;
+  @Autowired
+  CoupleService coupleService;
 
-    @Autowired
-    UserServiceImpl userService;
+  @Autowired
+  UserServiceImpl userService;
 
-    @DisplayName("커플이 저장될 때, 유저의 정보가 update 되는지 확인한다.")
-    @Commit
-    @Transactional
-    @Test
-    void createCoupleCascadeUserUpdateTest() {
-        // given
-        List<User> users = CoupleFixtures.initialUsers();
-        for (User user : users) {
-            userService.create(UserDto.fromUser(user));
-        }
 
-        // when
-        CoupleRequest coupleRequest = new CoupleRequest();
-        coupleRequest.setUsers(users);
-        coupleService.createCouple(coupleRequest.toCommand());
-        User user = userService.getById(users.get(0).getId());
+  @Transactional
+  @DisplayName("커플이 저장될 때, 유저의 정보가 update 되는지 확인한다.")
+  @Test
+  void createCoupleAndUserUpdate() {
+    // given
+    List<User> users = CoupleFixtures.initialUsers();
 
-        // then
-        assertThat(user.getCouple().getId()).isNotNull();
-    }
+    userService.create(UserDto.fromUser(users.get(0)));
+    userService.create(UserDto.fromUser(users.get(1)));
+
+    String senderEmail = users.get(0).getEmail();
+    String receiverEmail = users.get(1).getEmail();
+
+    // when
+    CoupleRequest coupleRequest = new CoupleRequest(senderEmail, receiverEmail);
+    coupleService.createCouple(coupleRequest.toCommand());
+    User user = userService.getByEmail(senderEmail);
+
+    // then
+    assertThat(user.getCouple()).isNotNull();
+  }
 
 }

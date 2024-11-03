@@ -4,6 +4,7 @@ import bit.couple.domain.Couple;
 import bit.user.domain.User;
 import bit.user.dto.UserDto;
 import bit.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,16 @@ public class UserServiceImpl implements UserService {
     return userRepository.save(User.from(userDto));
   }
 
-  public void updateCouple(List<Long> userIds, Couple couple) {
-    for (Long userID : userIds) {
-      User existingUser = userRepository.findById(userID)
-          .orElseThrow(() -> new IllegalArgumentException("User not found"));
-      User updateCoupleUser = existingUser.updateCouple(couple);
+  @Transactional
+  public void updateCouple(String senderEmail, String receiverEmail, Couple couple) {
+    User sender = userRepository.findByEmail(senderEmail)
+        .orElseThrow(() -> new IllegalArgumentException("User not found By Email"));
+    User receiver = userRepository.findByEmail(receiverEmail)
+        .orElseThrow(() -> new IllegalArgumentException("User not found By Email"));
+
+    for (User user : List.of(sender, receiver)) {
+      User updateCoupleUser = user.updateCouple(couple);
       userRepository.save(updateCoupleUser);
     }
   }
-
 }
