@@ -2,17 +2,20 @@ package bit.couple.dto;
 
 import bit.couple.domain.Couple;
 import bit.dday.dto.BaseRequest;
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@Builder
+@RequiredArgsConstructor
 public class CoupleRequest implements BaseRequest<Couple> {
 
-  private final List<Long> userIds = new ArrayList<>();
+  private final String senderEmail;
+  private final String receiverEmail;
 
   @Override
   public CoupleCommand toCommand() {
-    return new CoupleCommand(userIds);
+    return new CoupleCommand(senderEmail, receiverEmail);
   }
 }

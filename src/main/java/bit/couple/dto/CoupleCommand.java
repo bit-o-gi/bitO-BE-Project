@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CoupleCommand implements BaseCommand<Couple> {
 
-  private final List<Long> userIds;
-
+  private final String sender;
+  private final String receiver;
 
 }

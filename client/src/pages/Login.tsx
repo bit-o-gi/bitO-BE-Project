@@ -55,7 +55,7 @@ function Login() {
     .then((res) => {
       console.log('userInfo', res);
 
-      sessionStorage.setItem('myEmail', JSON.stringify(res.data.kakao_account.email));
+      sessionStorage.setItem('myEmail', res.data.kakao_account.email);
       navigate('/');
     })
     .catch((err) => {

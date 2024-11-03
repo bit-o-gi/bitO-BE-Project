@@ -15,5 +15,5 @@ public interface UserService {
 
   boolean findByEmail(String email);
 
-  void updateCouple(List<Long> usersId, Couple couple);
+  void updateCouple(String senderEmail, String receiverEmail, Couple couple);
 }
