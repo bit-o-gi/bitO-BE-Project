@@ -1,6 +1,7 @@
 package bit.couple.service;
 
 import bit.couple.domain.Couple;
+import bit.couple.domain.CoupleStatus;
 import bit.couple.dto.CoupleCommand;
 import bit.couple.exception.CoupleException.CoupleNotFoundException;
 import bit.couple.repository.CoupleRepository;
@@ -13,27 +14,32 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CoupleService {
 
-    private final CoupleRepository coupleRepository;
-    private final UserService userService;
+  private final CoupleRepository coupleRepository;
+  private final UserService userService;
 
-    @Transactional
-    public void createCouple(CoupleCommand command) {
-        Couple couple = Couple.of(command.getUsers());
-        coupleRepository.save(couple);
-        userService.updateCouple(command.getUsers(), couple);
-    }
+  @Transactional
+  public void createCouple(CoupleCommand command) {
+    String sender = command.getSender();
+    String receiver = command.getReceiver();
 
-    public void approveCouple(Long coupleId) {
-        Couple couple = coupleRepository.findById(coupleId).orElseThrow(CoupleNotFoundException::new);
-        couple.approve();
-        coupleRepository.save(couple);
-    }
+    Couple savedCouple = coupleRepository.save(
+        Couple.of(sender, receiver, CoupleStatus.CREATING)
+    );
 
-    public void deleteCouple(Long coupleId) {
-        if (!coupleRepository.existsById(coupleId)) {
-            throw new CoupleNotFoundException();
-        }
-        // TODO: 바로 지우는 대신 스케줄링 등록
-        coupleRepository.deleteById(coupleId);
+    userService.updateCouple(sender, receiver, savedCouple);
+  }
+
+  public void approveCouple(Long coupleId) {
+    Couple couple = coupleRepository.findById(coupleId).orElseThrow(CoupleNotFoundException::new);
+    couple.approve();
+    coupleRepository.save(couple);
+  }
+
+  public void deleteCouple(Long coupleId) {
+    if (!coupleRepository.existsById(coupleId)) {
+      throw new CoupleNotFoundException();
     }
+    // TODO: 바로 지우는 대신 스케줄링 등록
+    coupleRepository.deleteById(coupleId);
+  }
 }

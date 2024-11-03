@@ -20,56 +20,56 @@ import lombok.Getter;
 
 @Entity
 @Getter
-@Table(name = "APPUSER")
+@Table(name = "users")
 public class UserEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(unique = true)
-    private String email;
+  @Column(unique = true)
+  private String email;
 
-    private String nickName;
+  private String nickName;
 
-    private String gender;
+  private String gender;
 
-    @Enumerated(EnumType.STRING)
-    private OauthPlatformStatus platform;
+  @Enumerated(EnumType.STRING)
+  private OauthPlatformStatus platform;
 
-    private LocalDateTime registerDate;
+  private LocalDateTime registerDate;
 
-    @ManyToOne
-    @JoinColumn(name = "couple_id")
-    private Couple couple;
+  @ManyToOne
+  @JoinColumn(name = "couple_id")
+  private Couple couple;
 
-    public static UserEntity from(User user) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.id = user.getId();
-        userEntity.email = user.getEmail();
-        userEntity.nickName = user.getNickName();
-        userEntity.platform = user.getPlatform();
-        userEntity.registerDate = user.getRegisterDate();
-        userEntity.couple = user.getCouple();
-        return userEntity;
-    }
+  public static UserEntity from(User user) {
+    UserEntity userEntity = new UserEntity();
+    userEntity.id = user.getId();
+    userEntity.email = user.getEmail();
+    userEntity.nickName = user.getNickName();
+    userEntity.platform = user.getPlatform();
+    userEntity.registerDate = user.getRegisterDate();
+    userEntity.couple = user.getCouple();
+    return userEntity;
+  }
 
-    public static List<UserEntity> fromList(List<User> users) {
-        return users.stream()
-                .map(UserEntity::from)
-                .toList();
-    }
+  public static List<UserEntity> fromList(List<User> users) {
+    return users.stream()
+        .map(UserEntity::from)
+        .toList();
+  }
 
-    public User toModel() {
-        return User.builder()
-                .id(id)
-                .email(email)
-                .nickName(nickName)
-                .gender(gender)
-                .platform(platform)
-                .registerDate(registerDate)
-                .couple(couple)
-                .build();
-    }
+  public User toModel() {
+    return User.builder()
+        .id(id)
+        .email(email)
+        .nickName(nickName)
+        .gender(gender)
+        .platform(platform)
+        .registerDate(registerDate)
+        .couple(couple)
+        .build();
+  }
 
 }

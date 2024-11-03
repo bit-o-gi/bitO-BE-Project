@@ -1,44 +1,41 @@
 package bit.couple.domain;
 
-import bit.dday.domain.Dday;
 import bit.schedule.domain.BaseEntity;
-import bit.user.domain.User;
-import bit.user.entity.UserEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Couple extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @OneToMany(mappedBy = "couple")
-    private List<UserEntity> users;
+  private String sender;
 
-    @OneToOne(mappedBy = "couple")
-    private Dday dday;
+  private String receiver;
 
-    private CoupleStatus status;
+  private CoupleStatus status;
 
-    public static Couple of(List<User> users) {
-        Couple couple = new Couple();
-        couple.users = UserEntity.fromList(users);
-        couple.status = CoupleStatus.CREATING;
-        return couple;
-    }
+  public static Couple of(String sender, String receiver, CoupleStatus status) {
+    return Couple.builder()
+        .sender(sender)
+        .receiver(receiver)
+        .status(status)
+        .build();
+  }
 
-    public void approve() {
-        this.status = CoupleStatus.APPROVED;
-    }
+  public void approve() {
+    this.status = CoupleStatus.APPROVED;
+  }
 }

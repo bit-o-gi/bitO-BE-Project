@@ -11,38 +11,47 @@ import lombok.ToString;
 @Getter
 @ToString
 public class User {
-    private final Long id;
-    private final String email;
-    private final String nickName;
-    private final String gender;
-    private final OauthPlatformStatus platform;
-    private final LocalDateTime registerDate;
-    private Couple couple;
 
-    @Builder
-    public User(Long id, String email, String nickName, String gender, OauthPlatformStatus platform,
-                LocalDateTime registerDate, Couple couple) {
-        this.id = id;
-        this.email = email;
-        this.nickName = nickName;
-        this.gender = gender;
-        this.platform = platform;
-        this.registerDate = registerDate;
-        this.couple = couple;
-    }
+  private final Long id;
+  private final String email;
+  private final String nickName;
+  private final String gender;
+  private final OauthPlatformStatus platform;
+  private final LocalDateTime registerDate;
+  private final Couple couple;
 
-    public static User from(UserDto userDto) {
-        return User.builder()
-                .email(userDto.getEmail())
-                .nickName(userDto.getNickName())
-                .gender(userDto.getGender())
-                .platform(userDto.getPlatform())
-                .registerDate(userDto.getRegisterDate())
-                .build();
-    }
+  @Builder
+  public User(Long id, String email, String nickName, String gender, OauthPlatformStatus platform,
+      LocalDateTime registerDate, Couple couple) {
+    this.id = id;
+    this.email = email;
+    this.nickName = nickName;
+    this.gender = gender;
+    this.platform = platform;
+    this.registerDate = registerDate;
+    this.couple = couple;
+  }
 
-    public void updateCouple(Couple couple) {
-        this.couple = couple;
-    }
+  public static User from(UserDto userDto) {
+    return User.builder()
+        .email(userDto.getEmail())
+        .nickName(userDto.getNickName())
+        .gender(userDto.getGender())
+        .platform(userDto.getPlatform())
+        .registerDate(userDto.getRegisterDate())
+        .build();
+  }
+
+  public User updateCouple(Couple couple) {
+    return User.builder()
+        .id(this.id)
+        .email(this.getEmail())
+        .nickName(this.getNickName())
+        .gender(this.getGender())
+        .platform(this.getPlatform())
+        .registerDate(this.getRegisterDate())
+        .couple(couple)
+        .build();
+  }
 
 }
