@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class ScheduleResponse {
     private Long id;
 
-    private Long userId;
+    private String nickName;
 
     private String title;
 
@@ -23,7 +23,7 @@ public class ScheduleResponse {
 
     public ScheduleResponse(Schedule schedule) {
         this.id = schedule.getId();
-        this.userId = schedule.getUserId();
+        this.nickName = schedule.getUser().getNickName();
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
         this.startDateTime = schedule.getStartDateTime();
