@@ -2,8 +2,9 @@ package bit.schedule.controller;
 
 import bit.exception.GlobalExceptionHandler;
 import bit.schedule.domain.Schedule;
-import bit.schedule.dto.ScheduleRequest;
+import bit.schedule.dto.ScheduleCreateRequest;
 import bit.schedule.dto.ScheduleResponse;
+import bit.schedule.dto.ScheduleUpdateRequest;
 import bit.schedule.exception.ScheduleNotFoundException;
 import bit.schedule.service.ScheduleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,8 +21,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import static bit.schedule.util.ScheduleFixture.getNewSchedule;
-import static bit.schedule.util.ScheduleRequestFixture.getNewScheduleRequest;
-import static bit.schedule.util.ScheduleRequestFixture.getNewScheduleRequests;
+import static bit.schedule.util.ScheduleRequestFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -84,9 +84,9 @@ class ScheduleControllerTest {
     void saveTest() throws Exception {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        ScheduleRequest request = getNewScheduleRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleCreateRequest request = getNewScheduleCreateRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.saveSchedule(any(ScheduleRequest.class))).thenReturn(response);
+        when(scheduleService.saveSchedule(any(ScheduleCreateRequest.class))).thenReturn(response);
         //When
         //Then
         mockMvc.perform(
@@ -105,8 +105,8 @@ class ScheduleControllerTest {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.saveSchedule(any(ScheduleRequest.class))).thenReturn(response);
-        List<ScheduleRequest> scheduleRequests = getNewScheduleRequests();
+        when(scheduleService.saveSchedule(any(ScheduleCreateRequest.class))).thenReturn(response);
+        List<ScheduleCreateRequest> scheduleCreateRequests = getNewScheduleRequests();
         List<String> errorMessages = List.of(
                 "{\"userId\":\"유저 아이디가 필요합니다.\"}",
                 "{\"title\":\"제목이 필요합니다.\"}",
@@ -116,8 +116,8 @@ class ScheduleControllerTest {
         );
         //When
         //Then
-        for (int i = 0; i < scheduleRequests.size(); i++) {
-            ScheduleRequest request = scheduleRequests.get(i);
+        for (int i = 0; i < scheduleCreateRequests.size(); i++) {
+            ScheduleCreateRequest request = scheduleCreateRequests.get(i);
             String expectedErrorMessage = errorMessages.get(i);
 
             try {
@@ -156,9 +156,9 @@ class ScheduleControllerTest {
     void patchTest() throws Exception {
         //Given
         Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        ScheduleRequest request = getNewScheduleRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleUpdateRequest request = getNewScheduleUpdateRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         ScheduleResponse response = new ScheduleResponse(schedule);
-        when(scheduleService.updateSchedule(eq(0L), any(ScheduleRequest.class))).thenReturn(response);
+        when(scheduleService.updateSchedule(eq(0L), any(ScheduleUpdateRequest.class))).thenReturn(response);
         //When
         //Then
         mockMvc.perform(

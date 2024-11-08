@@ -1,7 +1,8 @@
 package bit.schedule.controller;
 
-import bit.schedule.dto.ScheduleRequest;
+import bit.schedule.dto.ScheduleCreateRequest;
 import bit.schedule.dto.ScheduleResponse;
+import bit.schedule.dto.ScheduleUpdateRequest;
 import bit.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +26,19 @@ public class ScheduleController {
         return scheduleService.getSchedulesByUserId(userId);
     }
 
+    @GetMapping("/couple/{coupleId}")
+    public List<ScheduleResponse> getScheduleByCouple(@PathVariable Long coupleId) {
+        return scheduleService.getSchedulesByCoupleId(coupleId);
+    }
+
     @PostMapping("")
-    public ScheduleResponse createSchedule(@Valid @RequestBody ScheduleRequest scheduleRequest) {
-        return scheduleService.saveSchedule(scheduleRequest);
+    public ScheduleResponse createSchedule(@Valid @RequestBody ScheduleCreateRequest scheduleCreateRequest) {
+        return scheduleService.saveSchedule(scheduleCreateRequest);
     }
 
     @PutMapping("/{scheduleId}")
-    public ScheduleResponse updateSchedule(@PathVariable Long scheduleId, @Valid @RequestBody ScheduleRequest scheduleRequest) {
-        return scheduleService.updateSchedule(scheduleId, scheduleRequest);
+    public ScheduleResponse updateSchedule(@PathVariable Long scheduleId, @Valid @RequestBody ScheduleUpdateRequest scheduleUpdateRequest) {
+        return scheduleService.updateSchedule(scheduleId, scheduleUpdateRequest);
     }
 
     @DeleteMapping("/{scheduleId}")

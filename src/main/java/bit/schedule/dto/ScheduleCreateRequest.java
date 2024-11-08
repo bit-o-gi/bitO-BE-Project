@@ -1,6 +1,7 @@
 package bit.schedule.dto;
 
 import bit.schedule.domain.Schedule;
+import bit.user.entity.UserEntity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +9,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ScheduleRequest {
+public class ScheduleCreateRequest {
 
     @NotNull(message = "유저 아이디가 필요합니다.")
     private Long userId;
@@ -26,7 +27,7 @@ public class ScheduleRequest {
     private LocalDateTime endDateTime;
 
     @Builder
-    public ScheduleRequest(Long userId, String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public ScheduleCreateRequest(Long userId, String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this.userId = userId;
         this.title = title;
         this.content = content;
@@ -34,10 +35,10 @@ public class ScheduleRequest {
         this.endDateTime = endDateTime;
     }
 
-    public Schedule toEntity() {
+    public Schedule toEntity(UserEntity user) {
         return Schedule.builder()
-                .userId(userId)
                 .title(title)
+                .user(user)
                 .content(content)
                 .startDateTime(startDateTime)
                 .endDateTime(endDateTime)

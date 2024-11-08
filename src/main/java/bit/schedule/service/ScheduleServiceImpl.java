@@ -1,10 +1,14 @@
 package bit.schedule.service;
 
 import bit.schedule.domain.Schedule;
-import bit.schedule.dto.ScheduleRequest;
+import bit.schedule.dto.ScheduleCreateRequest;
 import bit.schedule.dto.ScheduleResponse;
+import bit.schedule.dto.ScheduleUpdateRequest;
 import bit.schedule.exception.ScheduleNotFoundException;
 import bit.schedule.repository.ScheduleRepository;
+import bit.user.entity.UserEntity;
+import bit.user.repository.UserJpaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,7 @@ import java.util.List;
 public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserJpaRepository userJpaRepository;
 
     @Override
     public ScheduleResponse getSchedule(Long scheduleId) {
@@ -32,19 +37,28 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .toList();
     }
 
+    @Override
+    public List<ScheduleResponse> getSchedulesByCoupleId(Long coupleId) {
+        return scheduleRepository.findByUserCoupleId(coupleId)
+                .stream()
+                .map(ScheduleResponse::new)
+                .toList();
+    }
+
     @Transactional
     @Override
-    public ScheduleResponse saveSchedule(ScheduleRequest scheduleRequest) {
-        Schedule schedule = scheduleRequest.toEntity();
+    public ScheduleResponse saveSchedule(ScheduleCreateRequest scheduleCreateRequest) {
+        UserEntity userEntity = userJpaRepository.findById(scheduleCreateRequest.getUserId()).orElseThrow(EntityNotFoundException::new);
+        Schedule schedule = scheduleCreateRequest.toEntity(userEntity);
         scheduleRepository.save(schedule);
         return new ScheduleResponse(schedule);
     }
 
     @Transactional
     @Override
-    public ScheduleResponse updateSchedule(Long scheduleId, ScheduleRequest scheduleRequest) {
+    public ScheduleResponse updateSchedule(Long scheduleId, ScheduleUpdateRequest scheduleUpdateRequest) {
         Schedule schedule = findScheduleById(scheduleId);
-        schedule.update(scheduleRequest);
+        schedule.update(scheduleUpdateRequest);
         scheduleRepository.save(schedule);
         return new ScheduleResponse(schedule);
     }
