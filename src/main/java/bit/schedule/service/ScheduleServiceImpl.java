@@ -31,21 +31,15 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public List<ScheduleResponse> getSchedulesByUserId(Long userId) {
-        // TODO : 유저 엔티티로 검색을 해야하는데, userService 에서 제공해주지 않아서 임시로 userJpaRepository로 검색함
-        UserEntity userEntity = userJpaRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
-
-        return scheduleRepository.findByUser(userEntity)
+        return scheduleRepository.findByUserId(userId)
                 .stream()
                 .map(ScheduleResponse::new)
                 .toList();
     }
 
-    // TODO : 커플 ID로 유저 ID 검색하는 부분이 필요함. 현재 임시로 유저 레파지토리로 검색함
     @Override
     public List<ScheduleResponse> getSchedulesByCoupleId(Long coupleId) {
-        List<UserEntity> users = userJpaRepository.findByCoupleId(coupleId);
-
-        return scheduleRepository.findByUserIn(users)
+        return scheduleRepository.findByUserCoupleId(coupleId)
                 .stream()
                 .map(ScheduleResponse::new)
                 .toList();
