@@ -1,10 +1,9 @@
-package bit.dday.domain;
+package bit.day.domain;
 
 import bit.couple.domain.Couple;
-import bit.dday.dto.DdayCommand;
+import bit.day.dto.DayCommand;
 import bit.schedule.domain.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Dday extends BaseEntity {
+public class Day extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,18 +29,18 @@ public class Dday extends BaseEntity {
     @NotNull
     private String title;
     @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
-    private LocalDateTime targetDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private LocalDate startDate;
 
     @Builder
-    private Dday(Couple couple, String title, LocalDateTime targetDate) {
+    private Day(Couple couple, String title, LocalDate startDate) {
         this.couple = couple;
         this.title = title;
-        this.targetDate = targetDate;
+        this.startDate = startDate;
     }
 
-    public void update(DdayCommand ddayCommand) {
-        this.title = ddayCommand.title;
-        this.targetDate = ddayCommand.targetDate;
+    public void update(DayCommand dayCommand) {
+        this.title = dayCommand.title;
+        this.startDate = dayCommand.startDate;
     }
 }
