@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CoupleRepository extends JpaRepository<Couple, Long> {
-//    Optional<Couple> findByUsersId(Long id);
+   // Optional<Couple> findByUsersId(Long id);
 }

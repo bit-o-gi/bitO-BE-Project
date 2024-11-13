@@ -49,21 +49,29 @@ public class AnService {
 
 	@Transactional
 	public AnResDto updateAnniversary(Long id, AnReqDto anReqDto) {
+		// 기존 Anniversary 엔티티 조회
 		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
+		// 작성자와 관련된 사용자를 찾기
 		UserEntity writer = userRepository.findByEmail(anReqDto.getWriterEmail())
 			.orElseThrow(() -> new EntityNotFoundException("Writer not found"));
 		UserEntity withPeople = userRepository.findByEmail(anReqDto.getWithPeopleEmail())
 			.orElseThrow(() -> new EntityNotFoundException("WithPeople not found"));
 
-		AnDto anDto = modelMapper.map(anReqDto, AnDto.class);
+		// AnReqDto -> AnDto 변환 및 업데이트
+		AnDto anDto = anReqDto.toAnDto();
 		anniversary.updateAnniversary(anDto, writer, withPeople);
 
+		// 변경 사항 저장
+		Anniversary updatedAnniversary = anRepository.save(anniversary); // save 호출 추가
+
+		// 변환하여 반환
 		UserResponse writerRes = UserResponse.from(writer.toModel());
 		UserResponse withPeopleRes = UserResponse.from(withPeople.toModel());
 
-		return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
+		return AnResDto.from(anDto, writerRes, withPeopleRes, updatedAnniversary.calculateDaysToAnniversary());
 	}
+
 
 	@Transactional
 	public void deleteAnniversary(Long id) {

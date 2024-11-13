@@ -1,6 +1,6 @@
 package bit.anniversary.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -31,20 +30,11 @@ class AnRepositoryTest {
 	private UserJpaRepository userRepository;
 
 	private ModelMapper modelMapper = new ModelMapper();
-	private UserEntity writer;
-	private UserEntity withPeople;
-
 	private UserEntity writerEntity;
 	private UserEntity withPeopleEntity;
-	private AnReqDto anReqDto;
-	private AnDto anDto;
-	private Anniversary anniversary;
 
 	@BeforeEach
 	void setUp() {
-		// 사용자 엔티티 생성
-		MockitoAnnotations.openMocks(this);
-
 		// User 객체 생성 후 UserEntity로 변환
 		User writer = User.builder()
 			.id(1L)
@@ -61,51 +51,18 @@ class AnRepositoryTest {
 			.registerDate(LocalDateTime.now())
 			.build();
 
-		// UserEntity로 변환
+		// UserEntity로 변환하여 저장
 		writerEntity = UserEntity.from(writer);
 		withPeopleEntity = UserEntity.from(withPeople);
-
-		anReqDto = AnReqDto.builder()
-			.writerEmail("writer@example.com")
-			.withPeopleEmail("withpeople@example.com")
-			.title("Test Anniversary")
-			.anniversaryDate("2023-12-25T00:00")
-			.build();
-
-		anDto = AnDto.builder()
-			.id(1L)
-			.title("Test Anniversary")
-			.writerEmail("writer@example.com")
-			.withPeopleEmail("withpeople@example.com")
-			.anniversaryDate("2023-12-25T00:00")
-			.build();
-
-		anniversary = Anniversary.builder()
-			.id(1L)
-			.title("Test Anniversary")
-			.anniversaryDate(LocalDateTime.parse("2023-12-25T00:00"))
-			.writer(writerEntity)
-			.withPeople(withPeopleEntity)
-			.build();
+		userRepository.save(writerEntity);
+		userRepository.save(withPeopleEntity);
 	}
 
 	@DisplayName("기념일 저장 및 조회 테스트")
 	@Test
 	void saveAndFindAnniversaryTest() {
-		// AnReqDto -> AnDto -> Anniversary 변환
-		AnReqDto anReqDto = AnReqDto.builder()
-			.writerEmail(writer.getEmail())
-			.withPeopleEmail(withPeople.getEmail())
-			.title("Test Anniversary")
-			.anniversaryDate("2023-12-25T00:00")
-			.build();
-
-		AnDto anDto = anReqDto.toAnDto();
-		Anniversary anniversary = anDto.toEntity(modelMapper);
-		anniversary.updateAnniversary(anDto, writer, withPeople);
-
 		// 기념일 저장
-		Anniversary savedAnniversary = anRepository.save(anniversary);
+		Anniversary savedAnniversary = saveTestAnniversary("2023-12-25T00:00");
 
 		// 기념일 조회
 		Anniversary foundAnniversary = anRepository.findById(savedAnniversary.getId()).orElse(null);
@@ -113,8 +70,8 @@ class AnRepositoryTest {
 		// 검증
 		assertThat(foundAnniversary).isNotNull();
 		assertThat(foundAnniversary.getTitle()).isEqualTo("Test Anniversary");
-		assertThat(foundAnniversary.getWriter().getEmail()).isEqualTo("writer@example.com");
-		assertThat(foundAnniversary.getWithPeople().getEmail()).isEqualTo("withpeople@example.com");
+		assertThat(foundAnniversary.getWriter().getEmail()).isEqualTo(writerEntity.getEmail());
+		assertThat(foundAnniversary.getWithPeople().getEmail()).isEqualTo(withPeopleEntity.getEmail());
 	}
 
 	@DisplayName("특정 날짜 범위의 기념일 조회 테스트")
@@ -122,7 +79,7 @@ class AnRepositoryTest {
 	void findAllByAnniversaryDateBetweenTest() {
 		// 테스트용 기념일 저장
 		Anniversary anniversary1 = saveTestAnniversary("2023-12-25T00:00");
-		Anniversary anniversary2 = saveTestAnniversary("2024-01-10T00:00");
+		saveTestAnniversary("2024-01-10T00:00");
 
 		LocalDateTime startDate = LocalDateTime.of(2023, 12, 24, 0, 0);
 		LocalDateTime endDate = LocalDateTime.of(2024, 1, 5, 23, 59);
@@ -139,7 +96,7 @@ class AnRepositoryTest {
 	@Test
 	void findAllByAnniversaryDateAfterTest() {
 		// 테스트용 기념일 저장
-		Anniversary anniversary1 = saveTestAnniversary("2023-12-25T00:00");
+		saveTestAnniversary("2023-12-25T00:00");
 		Anniversary anniversary2 = saveTestAnniversary("2024-01-10T00:00");
 
 		LocalDateTime date = LocalDateTime.of(2023, 12, 26, 0, 0);
@@ -157,7 +114,7 @@ class AnRepositoryTest {
 	void findAllByAnniversaryDateBeforeTest() {
 		// 테스트용 기념일 저장
 		Anniversary anniversary1 = saveTestAnniversary("2023-12-25T00:00");
-		Anniversary anniversary2 = saveTestAnniversary("2024-01-10T00:00");
+		saveTestAnniversary("2024-01-10T00:00");
 
 		LocalDateTime date = LocalDateTime.of(2024, 1, 1, 0, 0);
 
@@ -172,16 +129,16 @@ class AnRepositoryTest {
 	// 테스트 기념일 저장 헬퍼 메서드
 	private Anniversary saveTestAnniversary(String anniversaryDate) {
 		AnReqDto anReqDto = AnReqDto.builder()
-			.writerEmail(writer.getEmail())
-			.withPeopleEmail(withPeople.getEmail())
+			.writerEmail(writerEntity.getEmail())
+			.withPeopleEmail(withPeopleEntity.getEmail())
 			.title("Test Anniversary")
 			.anniversaryDate(anniversaryDate)
 			.build();
 
 		AnDto anDto = anReqDto.toAnDto();
 		Anniversary anniversary = anDto.toEntity(modelMapper);
-		anniversary.updateAnniversary(anDto, writer, withPeople);
+		anniversary.updateAnniversary(anDto, writerEntity, withPeopleEntity);
 
-		return anRepository.save(anniversary);
+		return anRepository.save(anniversary); // 반환값을 명확히 함
 	}
 }
