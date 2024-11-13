@@ -1,19 +1,25 @@
-package bit.anniversary.sevice;
+package bit.anniversary.service;
 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import bit.anniversary.dto.AnDto;
+import bit.anniversary.dto.AnReqDto;
 import bit.anniversary.dto.AnResDto;
 import bit.anniversary.entity.Anniversary;
 import bit.anniversary.repository.AnRepository;
+import bit.user.dto.UserResponse;
+import bit.user.entity.UserEntity;
+import bit.user.repository.UserJpaRepository;
+import bit.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -21,92 +27,99 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AnService {
 
-    private final AnRepository anRepository;
+	private final AnRepository anRepository;
+	private final UserJpaRepository userRepository;
+	private final ModelMapper modelMapper;
 
-    private final ModelMapper modelMapper;
+	// 기념일 생성
+	public AnResDto createAnniversary(AnReqDto anReqDto) {
+		UserEntity writer = userRepository.findByEmail(anReqDto.getWriterEmail())
+			.orElseThrow(() -> new EntityNotFoundException("Writer not found"));
+		UserEntity withPeople = userRepository.findByEmail(anReqDto.getWithPeopleEmail())
+			.orElseThrow(() -> new EntityNotFoundException("WithPeople not found"));
 
-    public AnDto saveAnniverSary(AnDto andto) {
-        return anRepository.save(andto.creatAnniversary(modelMapper)).createAnniversary(modelMapper);
-    }
+		AnDto anDto = modelMapper.map(anReqDto, AnDto.class);
+		Anniversary anniversary = anDto.createAnniversary(modelMapper);
+		anniversary.updateAnniversary(anDto, writer, withPeople);
+		anRepository.save(anniversary);
 
-    @Transactional
-    public AnDto updateAnniverSary(AnDto anDto) {
-        anRepository.findById(anDto.getId()).orElseThrow(EntityNotFoundException::new).update(anDto);
-        return anDto;
-    }
+		UserResponse writerRes = UserResponse.from(writer.toModel());
+		UserResponse withPeopleRes = UserResponse.from(withPeople.toModel());
 
-    @Transactional
-    public AnDto deleteAnniverSary(AnDto anDto) {
-        anRepository.deleteById(anDto.getId());
-        return anDto;
-    }
+		return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
+	}
 
-    @Transactional(readOnly = true)
-    public AnResDto getAnniverSary(AnDto anDto) {
-        return AnResDto.of(
-                anRepository.findById(anDto.getId()).orElseThrow(EntityNotFoundException::new).createAnniversary(modelMapper), modelMapper);
-    }
+	// 기념일 업데이트
+	@Transactional
+	public AnResDto updateAnniversary(Long id, AnReqDto anReqDto) {
+		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
-    @Transactional(readOnly = true)
-    public List<AnResDto> getAnniverSaryList() {
-        List<AnResDto> anReqDtos = new ArrayList<>();
-        anRepository.findAll().forEach(entity -> {
-            anReqDtos.add(entity.createAnniversary(modelMapper).createAnReqDto(modelMapper));
-        });
-        return anReqDtos;
-    }
+		UserEntity writer = userRepository.findByEmail(anReqDto.getWriterEmail())
+			.orElseThrow(() -> new EntityNotFoundException("Writer not found"));
+		UserEntity withPeople = userRepository.findByEmail(anReqDto.getWithPeopleEmail())
+			.orElseThrow(() -> new EntityNotFoundException("WithPeople not found"));
 
-    // NOTE: 현재 시간 <-> Dday 몇일 남았는지 계산하는 메서드
-    private long getNowAnniverSary(LocalDateTime anniverSary) {
-        LocalDateTime now = LocalDateTime.now();
-        return ChronoUnit.DAYS.between(now, anniverSary);
-    }
+		AnDto anDto = modelMapper.map(anReqDto, AnDto.class);
+		anniversary.updateAnniversary(anDto, writer, withPeople);
 
-    // NOTE : 반복 기념일 계산
-    private LocalDateTime calculateNextAnniversary(LocalDateTime anniversaryDate) {
-        return anniversaryDate.plusYears(1);
-    }
+		UserResponse writerRes = UserResponse.from(writer.toModel());
+		UserResponse withPeopleRes = UserResponse.from(withPeople.toModel());
 
-    // NOTE : 기념일 알림 기능
-    public void sendAnniversaryNotifications() {
-        List<AnResDto> anniversaryList = getAnniverSaryList();
-        anniversaryList.forEach(anResDto -> {
-            long daysLeft = getNowAnniverSary(anResDto.getAnniversaryDate());
-            if (daysLeft == 7 || daysLeft == 1) {
-                // 기념일 7일 전과 1일 전 알림 발송
-                // TODO: WebScoket 활용해서 추가 예정
-                // notificationService.sendNotification(anResDto);
-            }
-        });
-    }
+		return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
+	}
 
-    // NOTE: 날짜 범위로 기념일 검색
-    @Transactional(readOnly = true)
-    public List<AnResDto> getAnniversariesBetween(LocalDateTime startDate, LocalDateTime endDate ) {
-        List<AnResDto> result = new ArrayList<>();
-        anRepository.findAllByAnniversaryDateBetween(startDate, endDate)
-                .forEach(entity -> result.add(entity.createAnniversary(modelMapper).createAnReqDto(modelMapper)));
-        return result;
-    }
+	// 기념일 삭제
+	@Transactional
+	public void deleteAnniversary(Long id) {
+		anRepository.deleteById(id);
+	}
 
-    // NOTE:  사용자 정의 기념일 이벤트 처리
-    public AnDto saveCustomAnniversary(AnDto anDto, String customEvent) {
-        Anniversary entity = anRepository.save(anDto.creatAnniversary(modelMapper));
-        // TODO: 커스텀 이벤트
-        // entity.CustomEvent(customEvent);
+	// 특정 기념일 조회
+	@Transactional(readOnly = true)
+	public AnResDto getAnniversary(Long id) {
+		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+		return AnResDto.from(
+			anniversary.toDto(modelMapper),
+			UserResponse.from(anniversary.getWriter().toModel()),
+			UserResponse.from(anniversary.getWithPeople().toModel()),
+			anniversary.calculateDaysToAnniversary()
+		);
+	}
 
-        return entity.createAnniversary(modelMapper);
-    }
+	// 날짜 범위로 기념일 검색
+	@Transactional(readOnly = true)
+	public List<AnResDto> findAnniversariesInRange(LocalDateTime startDate, LocalDateTime endDate) {
+		return anRepository.findAllByAnniversaryDateBetween(startDate, endDate)
+			.stream()
+			.map(anniversary -> AnResDto.from(
+				anniversary.toDto(modelMapper),
+				UserResponse.from(anniversary.getWriter().toModel()),
+				UserResponse.from(anniversary.getWithPeople().toModel()),
+				anniversary.calculateDaysToAnniversary()
+			))
+			.collect(Collectors.toList());
+	}
 
-    // NOTE: 이벤트 카운트 다운.
-    @Transactional(readOnly = true)
-    public Map<String, Long> getAnniversaryCountdown(Long anniversaryId) {
-        Anniversary anniversary = anRepository.findById(anniversaryId)
-                .orElseThrow(EntityNotFoundException::new);
-        long daysRemaining = getNowAnniverSary(anniversary.createAnniversary(modelMapper).getAnniversaryDate());
-        return Map.of("daysRemaining", daysRemaining);
-    }
+	// 사용자 정의 이벤트 추가
+	@Transactional
+	public void addCustomEvent(Long id, String customEvent) {
+		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+		// Logic to add custom event based on customEvent
+	}
 
-//    NOTE:
+	// 알림 전송 (UDP)
+	public void sendAnniversaryNotification(AnResDto anniversary, String message) throws Exception {
+		try (DatagramSocket socket = new DatagramSocket()) {
+			byte[] buffer = message.getBytes();
+			InetAddress address = InetAddress.getByName("localhost");
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, 9876);
+			socket.send(packet);
+		}
+	}
 
+	// 반복 기념일 계산 (다음 기념일)
+	public LocalDateTime calculateNextAnniversary(Long id) {
+		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+		return anniversary.calculateNextAnniversary();
+	}
 }
