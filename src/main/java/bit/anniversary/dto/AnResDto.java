@@ -1,13 +1,10 @@
 package bit.anniversary.dto;
 
 import java.time.LocalDateTime;
-
 import bit.user.dto.UserResponse;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class AnResDto {
 
 	private Long id;
@@ -27,7 +24,7 @@ public class AnResDto {
 		resDto.title = anDto.getTitle();
 		resDto.updateTime = anDto.getUpdateTime();
 		resDto.content = anDto.getContent();
-		resDto.anniversaryDate = anDto.getAnniversaryDate();
+		resDto.anniversaryDate = anDto.getAnniversaryDate() != null ? LocalDateTime.parse(anDto.getAnniversaryDate()) : null;
 		resDto.writer = writer;
 		resDto.withPeople = withPeople;
 		resDto.daysToAnniversary = daysToAnniversary;

@@ -19,7 +19,6 @@ import bit.anniversary.repository.AnRepository;
 import bit.user.dto.UserResponse;
 import bit.user.entity.UserEntity;
 import bit.user.repository.UserJpaRepository;
-import bit.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +30,6 @@ public class AnService {
 	private final UserJpaRepository userRepository;
 	private final ModelMapper modelMapper;
 
-	// 기념일 생성
 	public AnResDto createAnniversary(AnReqDto anReqDto) {
 		UserEntity writer = userRepository.findByEmail(anReqDto.getWriterEmail())
 			.orElseThrow(() -> new EntityNotFoundException("Writer not found"));
@@ -39,7 +37,7 @@ public class AnService {
 			.orElseThrow(() -> new EntityNotFoundException("WithPeople not found"));
 
 		AnDto anDto = modelMapper.map(anReqDto, AnDto.class);
-		Anniversary anniversary = anDto.createAnniversary(modelMapper);
+		Anniversary anniversary = anDto.toEntity(modelMapper);
 		anniversary.updateAnniversary(anDto, writer, withPeople);
 		anRepository.save(anniversary);
 
@@ -49,7 +47,6 @@ public class AnService {
 		return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
 	}
 
-	// 기념일 업데이트
 	@Transactional
 	public AnResDto updateAnniversary(Long id, AnReqDto anReqDto) {
 		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -68,13 +65,11 @@ public class AnService {
 		return AnResDto.from(anDto, writerRes, withPeopleRes, anniversary.calculateDaysToAnniversary());
 	}
 
-	// 기념일 삭제
 	@Transactional
 	public void deleteAnniversary(Long id) {
 		anRepository.deleteById(id);
 	}
 
-	// 특정 기념일 조회
 	@Transactional(readOnly = true)
 	public AnResDto getAnniversary(Long id) {
 		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -86,7 +81,6 @@ public class AnService {
 		);
 	}
 
-	// 날짜 범위로 기념일 검색
 	@Transactional(readOnly = true)
 	public List<AnResDto> findAnniversariesInRange(LocalDateTime startDate, LocalDateTime endDate) {
 		return anRepository.findAllByAnniversaryDateBetween(startDate, endDate)
@@ -100,14 +94,6 @@ public class AnService {
 			.collect(Collectors.toList());
 	}
 
-	// 사용자 정의 이벤트 추가
-	@Transactional
-	public void addCustomEvent(Long id, String customEvent) {
-		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-		// Logic to add custom event based on customEvent
-	}
-
-	// 알림 전송 (UDP)
 	public void sendAnniversaryNotification(AnResDto anniversary, String message) throws Exception {
 		try (DatagramSocket socket = new DatagramSocket()) {
 			byte[] buffer = message.getBytes();
@@ -117,7 +103,6 @@ public class AnService {
 		}
 	}
 
-	// 반복 기념일 계산 (다음 기념일)
 	public LocalDateTime calculateNextAnniversary(Long id) {
 		Anniversary anniversary = anRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 		return anniversary.calculateNextAnniversary();
