@@ -7,7 +7,6 @@ import bit.anniversary.entity.Anniversary;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 public class AnDto {
 

@@ -12,9 +12,11 @@ import bit.anniversary.dto.AnReqDto;
 import bit.anniversary.dto.AnResDto;
 import bit.anniversary.service.AnService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Controller
 @RequiredArgsConstructor
+@Log4j2
 public class AnController {
 
 	private final AnService anniversaryService;
@@ -22,6 +24,7 @@ public class AnController {
 	// 기념일 생성
 	@MutationMapping
 	public AnResDto createAnniversary(@Argument("anDto") AnReqDto anReqDto) {
+		log.info("anReqDto ==> {}",anReqDto);
 		return anniversaryService.createAnniversary(anReqDto);
 	}
 
