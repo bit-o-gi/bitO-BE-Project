@@ -1,9 +1,9 @@
-package bit.dday.repository;
+package bit.day.repository;
 
-import bit.dday.domain.Dday;
+import bit.day.domain.Day;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DdayRepository extends JpaRepository<Dday, Long> {
+public interface DayRepository extends JpaRepository<Day, Long> {
 }

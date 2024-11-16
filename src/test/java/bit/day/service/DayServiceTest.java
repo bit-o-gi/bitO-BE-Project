@@ -1,12 +1,12 @@
-package bit.dday.service;
+package bit.day.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import bit.config.FixtureMonkeyConfig;
-import bit.dday.domain.Dday;
-import bit.dday.repository.DdayRepository;
+import bit.day.domain.Day;
+import bit.day.repository.DayRepository;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.type.TypeReference;
 import java.util.Optional;
@@ -20,40 +20,40 @@ import org.springframework.context.annotation.Import;
 
 @Import(FixtureMonkeyConfig.class)
 @SpringBootTest
-public class DdayServiceTest {
+public class DayServiceTest {
 
     @Autowired
     private FixtureMonkey fixtureMonkey;
     @Mock
-    private DdayRepository ddayRepository;
+    private DayRepository dayRepository;
     @InjectMocks
-    private DdayService ddayService;
+    private DayService dayService;
 
     @DisplayName("디데이 조회 성공")
     @Test
-    void getDdaySuccessTest() {
+    void getDaySuccessTest() {
         // given
-        Optional<Dday> optionalDday = fixtureMonkey.giveMeBuilder(new TypeReference<Optional<Dday>>() {
+        Optional<Day> optionalDday = fixtureMonkey.giveMeBuilder(new TypeReference<Optional<Day>>() {
         }).set("id", 1L).sample();
-        when(ddayRepository.findById(any())).thenReturn(optionalDday);
+        when(dayRepository.findById(any())).thenReturn(optionalDday);
 
         // when
-        Dday dday = ddayService.getDday(1L);
+        Day day = dayService.getDay(1L);
 
         // then
-        assertThat(dday).usingRecursiveComparison().isEqualTo(optionalDday.get());
+        assertThat(day).usingRecursiveComparison().isEqualTo(optionalDday.get());
     }
 
 //    @DisplayName("디데이 생성 성공")
 //    @Test
 //    void createDdaySuccessTest() throws Exception {
 //        //given
-//        Dday dday = DdayFixtures.initialDday();
-//        DdayRequest ddayRequest = DdayRequestFixtures.of();
+//        Day dday = DdayFixtures.initialDday();
+//        DayRequest ddayRequest = DdayRequestFixtures.of();
 //        when(ddayRepository.save(any())).thenReturn(dday);
 //
 //        // when
-//        Dday newDday = ddayService.createDday(ddayRequest.toCommand());
+//        Day newDday = ddayService.createDday(ddayRequest.toCommand());
 //
 //        // then
 //        assertThat(newDday).usingRecursiveComparison().isEqualTo(dday);
@@ -63,14 +63,14 @@ public class DdayServiceTest {
 //    @Test
 //    void updateDdaySuccessTest() throws Exception {
 //        // given
-//        Dday dday1 = DdayFixtures.initialDday();
-//        Dday dday2 = DdayFixtures.newDday();
-//        DdayRequest ddayRequest = DdayRequestFixtures.from(dday2);
+//        Day dday1 = DdayFixtures.initialDday();
+//        Day dday2 = DdayFixtures.newDday();
+//        DayRequest ddayRequest = DdayRequestFixtures.from(dday2);
 //        when(ddayRepository.findById(any())).thenReturn(Optional.of(dday1));
 //        when(ddayRepository.save(any())).thenReturn(dday2);
 //
 //        // when
-//        Dday newDday = ddayService.updateDday(dday1.getId(), ddayRequest.toCommand());
+//        Day newDday = ddayService.updateDday(dday1.getId(), ddayRequest.toCommand());
 //
 //        // then
 //        assertThat(newDday)
