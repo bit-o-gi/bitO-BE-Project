@@ -1,60 +1,66 @@
-# NOTE : graphql 의 기본 함수들
-#Int: 부호가 있는 32비트 정수.
-#Float: 부호가 있는 부동소수점 값. String: UTF-8 문자열.
-#Boolean: true 또는 false.
-#ID: ID 스칼라 타입은 객체를 다시 요청하거나 캐시의 키로써 자주 사용되는 고유 식별자를 나타냅니다. ID 타입은 String 과 같은 방법으로 직렬화되지만, ID 로 정의하는 것은 사람이 읽을 수 있도록 하는 의도가 아니라는 것을 의미
+# 기본 GraphQL 타입 설명
+# Int: 부호가 있는 32비트 정수.
+# Float: 부호가 있는 부동소수점 값.
+# String: UTF-8 문자열.
+# Boolean: true 또는 false.
+# ID: 고유 식별자.
 
+# Query (조회용)
+type Query {
+    # 특정 기념일 조회
+    getAnniversary(id: ID!): AnResDto
 
-type Query{
-    testA: String
-    getBoard(id: ID): BoardReqDto
-    getBoards: [BoardReqDto]
-    delete(id: ID) : Boolean
-    getAnniversary: AnResDto
-    getListAnniversary(memberId: ID): [AnResDto]
+    # 특정 사용자의 모든 기념일 목록 조회
+    getListAnniversary(memberId: ID!): [AnResDto]
+
+    # 특정 날짜 범위 내 기념일 목록 조회
+    getAnniversariesInRange(startDate: String!, endDate: String!): [AnResDto]
+
+    # 한 달 이내의 기념일 목록 조회
+    getMonthlyAnniversaries: [AnResDto]
+
+    # 일 년 이내의 기념일 목록 조회
+    getYearlyAnniversaries: [AnResDto]
 }
 
-type Mutation{
-    #    보드
-    CreateBoard(boardInput: BoardInput): BoardReqDto
-    UpdateBoard(boardInput: BoardInput): BoardReqDto
-    delete(id: ID): Boolean
-    #    기념일
-    createAnniversary(anDto : AnDto) : AnResDto
-    updateAnniversary(anDto : AnDto) : AnResDto
-    deleteBoard(anDto : AnDto) : AnResDto
+# Mutation (변경용)
+type Mutation {
+    # 기념일 생성
+    createAnniversary(anDto: AnReqDto): AnResDto
 
-}
-#   기념일
-input AnDto {
-    writeTime: String     # 대소문자 일치
-    updateTime: String    # 대소문자 일치
-    title: String
-    withPeople: String    # 대소문자 일치
-    writer: String
-    content: String
+    # 기념일 업데이트
+    updateAnniversary(id: ID!, anDto: AnReqDto): AnResDto
+
+    # 기념일 삭제
+    deleteAnniversary(id: ID!): Boolean
 }
 
-type AnResDto{
-    id : ID
-    writeTime : String
-    updateTime : String
-    title : String
-    withPeople : String
-    content : String
-}
-
-#   보드
-input BoardInput {
-    id: ID
-    title: String
-    content: String
-    writer : String
-}
-
-
-type BoardReqDto{
-    id: ID!
+# 기념일 생성 및 업데이트용 입력 타입
+input AnReqDto {
+    writerEmail: String!
+    withPeopleEmail: String!
+    writeTime: String
     title: String!
+    updateTime: String
     content: String
+    anniversaryDate: String!
+}
+
+# 기념일 응답 타입
+type AnResDto {
+    id: ID!
+    writeTime: String
+    title: String
+    updateTime: String
+    content: String
+    anniversaryDate: String
+    writer: UserResponse
+    withPeople: UserResponse
+    daysToAnniversary: Int
+}
+
+# 사용자 응답 타입
+type UserResponse {
+    email: String
+    nickName: String
 }

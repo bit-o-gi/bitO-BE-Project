@@ -1,43 +1,29 @@
 package bit.anniversary.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import bit.anniversary.entity.Anniversary;
-
-import java.time.LocalDateTime;
+import lombok.Setter;
 
 @Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-@Setter // TODO : 현재 파악한 소스로 graphql 에는 Setter 을 사용해야 된다.-> 추후 이유 찾아봄
 public class AnDto {
 
-    private Long id;
-    private String writeTime;
-    private String title;
-    private String writer;
-    private String withPeople;
-    private String updateTime;
-    private String content;
-    private LocalDateTime anniversaryDate;
+	private final Long id;
+	private final String writerEmail;
+	private final String withPeopleEmail;
+	private final String writeTime;
+	private final String title;
+	private final String updateTime;
+	private final String content;
+	private final String anniversaryDate;
 
-    // NOTE: DTO에서 Entity로 변환하는 메서드
-    public Anniversary creatAnniversary(ModelMapper modelMapper) {
-        return modelMapper.map(this, Anniversary.class);
-    }
+	public Anniversary toEntity(ModelMapper modelMapper) {
+		return modelMapper.map(this, Anniversary.class);
+	}
 
-    // NOTE: DTO에서 Response DTO로 변환하는 메서드
-    public AnResDto createAnReqDto(ModelMapper modelMapper) {
-        return modelMapper.map(this, AnResDto.class);
-    }
-
-    // NOTE: Entity에서 DTO로 변환하는 메서드 (정적 메서드로 정의)
-    public static AnDto of(Anniversary anniversary, ModelMapper modelMapper) {
-        return modelMapper.map(anniversary, AnDto.class);
-    }
+	public static AnDto fromEntity(Anniversary anniversary, ModelMapper modelMapper) {
+		return modelMapper.map(anniversary, AnDto.class);
+	}
 }
