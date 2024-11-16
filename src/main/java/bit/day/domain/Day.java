@@ -33,7 +33,8 @@ public class Day extends BaseEntity {
     private LocalDate startDate;
 
     @Builder
-    private Day(Couple couple, String title, LocalDate startDate) {
+    private Day(Long id, Couple couple, String title, LocalDate startDate) {
+        this.id = id;
         this.couple = couple;
         this.title = title;
         this.startDate = startDate;

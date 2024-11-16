@@ -1,16 +1,16 @@
 // import Sidebar from "../components/Sidebar";
-import { AnniversaryCard } from "../components/AnniversaryCard";
-import { DdayCard } from "../components/DdayCard";
+import {AnniversaryCard} from "../components/AnniversaryCard";
+import {DayCard} from "../components/DayCard";
 
 const Main = () => {
-  return (
-    <div>
-      {/*<Section>*/}
-      <DdayCard />
-      <AnniversaryCard />
-      {/*</Section>*/}
-    </div>
-  );
+    return (
+        <div>
+            {/*<Section>*/}
+            <DayCard/>
+            <AnniversaryCard/>
+            {/*</Section>*/}
+        </div>
+    );
 };
 
 export default Main;

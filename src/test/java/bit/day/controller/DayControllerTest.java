@@ -9,30 +9,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import bit.config.FixtureMonkeyConfig;
 import bit.day.domain.Day;
+import bit.day.dto.DayCommand;
 import bit.day.dto.DayRequest;
+import bit.day.fixture.DayTestFixture;
 import bit.day.service.DayService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.navercorp.fixturemonkey.FixtureMonkey;
+import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(controllers = DayController.class)
-@Import(FixtureMonkeyConfig.class)
 class DayControllerTest {
 
     private final String DDAY_PATH = "/api/v1/day";
-    @Autowired
-    private FixtureMonkey fixtureMonkey;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -44,54 +41,56 @@ class DayControllerTest {
     @Test
     void getDdaySuccessTest() throws Exception {
         // given
-        Day day = fixtureMonkey.giveMeBuilder(Day.class).set("id", 1L).sample();
-        when(dayService.getDay(any())).thenReturn(day);
+        Long dayId = 1L;
+        Day targetDay = DayTestFixture.createSampleDay();
+        when(dayService.getDay(dayId)).thenReturn(targetDay);
 
         // when
-        ResultActions result = mockMvc.perform(get(DDAY_PATH + "/" + day.getId()));
+        ResultActions result = mockMvc.perform(get(DDAY_PATH + "/" + dayId));
 
         // then
-        result.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(day.getId()))
-                .andExpect(jsonPath("$.title").value(day.getTitle()))
-                .andExpect(jsonPath("$.targetDate").value(day.getStartDate().toString()));
+        result.andDo(print()).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(targetDay.getId()))
+                .andExpect(jsonPath("$.title").value(targetDay.getTitle()))
+                .andExpect(jsonPath("$.startDate").value(targetDay.getStartDate().toString()));
     }
 
     @DisplayName("디데이 생성 성공")
     @Test
     void createDdaySuccessTest() throws Exception {
         // given
-        DayRequest dayRequest = fixtureMonkey.giveMeOne(DayRequest.class);
-        Day newDay = fixtureMonkey.giveMeBuilder(Day.class).set("id", null).sample();
-        when(dayService.createDay(any())).thenReturn(newDay);
+        DayRequest testRequest = new DayRequest(1L, "testRequest", LocalDate.of(2024, 11, 12));
+        Day targetDay = DayTestFixture.createSampleDay();
+        DayCommand command = testRequest.toCommand();
+        when(dayService.createDay(command)).thenReturn(targetDay);
 
         // when
-        ResultActions result = mockMvc.perform(post(DDAY_PATH + "/new").contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(dayRequest)));
+        ResultActions result = mockMvc.perform(post(DDAY_PATH).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(command)));
 
         // then
-        result.andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(newDay.getId()))
-                .andExpect(jsonPath("$.title").value(newDay.getTitle()))
-                .andExpect(jsonPath("$.targetDate").value(newDay.getStartDate().toString()));
+        result.andDo(print()).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(targetDay.getId()))
+                .andExpect(jsonPath("$.title").value(targetDay.getTitle()))
+                .andExpect(jsonPath("$.startDate").value(targetDay.getStartDate().toString()));
     }
 
     @DisplayName("디데이 수정 성공")
-    @RepeatedTest(50)
+    @Test
     void updateDdaySuccessTest() throws Exception {
         // given
-        DayRequest dayRequest = fixtureMonkey.giveMeOne(DayRequest.class);
-        Day updatedDay = fixtureMonkey.giveMeBuilder(Day.class).setNotNull("id")
-                .sample();
-        when(dayService.updateDay(any(), any())).thenReturn(updatedDay);
+        long id = 1L;
+        DayRequest testRequest = new DayRequest(1L, "testRequest", LocalDate.of(2024, 11, 12));
+        Day targetDay = DayTestFixture.createSampleDay();
+        when(dayService.updateDay(id, testRequest.toCommand())).thenReturn(targetDay);
 
         //when
         ResultActions result = mockMvc.perform(
-                put(DDAY_PATH + "/" + updatedDay.getId()).contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(updatedDay)));
+                put(DDAY_PATH + "/" + id).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(testRequest)));
 
         //then
         result.andDo(print())
-                .andExpect(jsonPath("$.id").value(updatedDay.getId()))
-                .andExpect(jsonPath("$.title").value(updatedDay.getTitle()))
-                .andExpect(jsonPath("$.targetDate").value(updatedDay.getStartDate().toString()));
+                .andExpect(jsonPath("$.id").value(targetDay.getId()))
+                .andExpect(jsonPath("$.title").value(targetDay.getTitle()))
+                .andExpect(jsonPath("$.startDate").value(targetDay.getStartDate().toString()));
     }
 }
