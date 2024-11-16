@@ -1,12 +1,12 @@
 package bit.schedule.domain;
 
-import bit.schedule.dto.ScheduleRequest;
+import bit.schedule.dto.ScheduleUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static bit.schedule.util.ScheduleRequestFixture.getNewScheduleRequest;
+import static bit.schedule.util.ScheduleFixture.getNewSchedule;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -16,26 +16,22 @@ class ScheduleTest {
     @Test
     void updateTest() {
         //Given
-        ScheduleRequest scheduleRequest = getNewScheduleRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        Schedule schedule = scheduleRequest.toEntity();
-        ScheduleRequest updateScheduleRequest = ScheduleRequest.builder()
-                .userId(2L)
+        Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleUpdateRequest scheduleUpdateRequest = ScheduleUpdateRequest.builder()
                 .title("title update test")
                 .content("content update test")
                 .startDateTime(LocalDateTime.of(2024, 9, 1, 1, 1))
                 .endDateTime(LocalDateTime.of(2024, 9, 1, 1, 1))
                 .build();
         //When
-        schedule.update(updateScheduleRequest);
+        schedule.update(scheduleUpdateRequest);
         //Then
         assertThat(schedule).extracting(
-                "userId",
                 "title",
                 "content",
                 "startDateTime",
                 "endDateTime"
         ).containsExactly(
-                2L,
                 "title update test",
                 "content update test",
                 LocalDateTime.of(2024, 9, 1, 1, 1),
@@ -47,10 +43,8 @@ class ScheduleTest {
     @Test
     void updateValidStartEndTimeTest() {
         //Given
-        ScheduleRequest scheduleRequest = getNewScheduleRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        Schedule schedule = scheduleRequest.toEntity();
-        ScheduleRequest updateScheduleRequest = ScheduleRequest.builder()
-                .userId(2L)
+        Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+        ScheduleUpdateRequest scheduleUpdateRequest = ScheduleUpdateRequest.builder()
                 .title("title update test")
                 .content("content update test")
                 .startDateTime(LocalDateTime.of(2024, 9, 1, 1, 1))
@@ -58,7 +52,7 @@ class ScheduleTest {
                 .build();
         //When
         //Then
-        assertThatThrownBy(() -> schedule.update(updateScheduleRequest))
+        assertThatThrownBy(() -> schedule.update(scheduleUpdateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("시작 시간은 종료 시간보다 늦을 수 없습니다.");
     }
@@ -67,8 +61,7 @@ class ScheduleTest {
     @Test
     void updateValidScheduleRequest() {
         //Given
-        ScheduleRequest scheduleRequest = getNewScheduleRequest(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
-        Schedule schedule = scheduleRequest.toEntity();
+        Schedule schedule = getNewSchedule(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
         //When
         //Then
         assertThatThrownBy(() -> schedule.update(null))

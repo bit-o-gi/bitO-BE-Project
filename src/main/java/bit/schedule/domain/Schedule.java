@@ -1,11 +1,8 @@
 package bit.schedule.domain;
 
-import bit.schedule.domain.BaseEntity;
-import bit.schedule.dto.ScheduleRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import bit.schedule.dto.ScheduleUpdateRequest;
+import bit.user.entity.UserEntity;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,9 @@ public class Schedule extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     private String title;
 
@@ -32,23 +31,22 @@ public class Schedule extends BaseEntity {
     private LocalDateTime endDateTime;
 
     @Builder
-    public Schedule(Long userId, String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public Schedule(UserEntity user, String title, String content, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         checkStartEndDateTime(startDateTime, endDateTime);
-        this.userId = Objects.requireNonNull(userId);
+        this.user = Objects.requireNonNull(user);
         this.title = Objects.requireNonNull(title);
         this.content = Objects.requireNonNull(content);
         this.startDateTime = Objects.requireNonNull(startDateTime);
         this.endDateTime = Objects.requireNonNull(endDateTime);
     }
 
-    public void update(ScheduleRequest scheduleRequest) {
-        Objects.requireNonNull(scheduleRequest);
-        checkStartEndDateTime(scheduleRequest.getStartDateTime(), scheduleRequest.getEndDateTime());
-        this.userId = Objects.requireNonNull(scheduleRequest.getUserId());
-        this.title = Objects.requireNonNull(scheduleRequest.getTitle());
-        this.content = Objects.requireNonNull(scheduleRequest.getContent());
-        this.startDateTime = Objects.requireNonNull(scheduleRequest.getStartDateTime());
-        this.endDateTime = Objects.requireNonNull(scheduleRequest.getEndDateTime());
+    public void update(ScheduleUpdateRequest scheduleUpdateRequest) {
+        Objects.requireNonNull(scheduleUpdateRequest);
+        checkStartEndDateTime(scheduleUpdateRequest.getStartDateTime(), scheduleUpdateRequest.getEndDateTime());
+        this.title = Objects.requireNonNull(scheduleUpdateRequest.getTitle());
+        this.content = Objects.requireNonNull(scheduleUpdateRequest.getContent());
+        this.startDateTime = Objects.requireNonNull(scheduleUpdateRequest.getStartDateTime());
+        this.endDateTime = Objects.requireNonNull(scheduleUpdateRequest.getEndDateTime());
     }
 
     private void checkStartEndDateTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
