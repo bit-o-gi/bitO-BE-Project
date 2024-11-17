@@ -2,8 +2,8 @@
 name: Notify PR Review
 
 on:
-  pull_request_review:
-    types: [ submitted ]
+  pull_request:
+    types: [ reopened ]
 
 jobs:
   notify:
