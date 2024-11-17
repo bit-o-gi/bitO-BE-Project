@@ -7,11 +7,11 @@ on:
 
 jobs:
   notify:
-    runs-on: ubuntu-latest
+    runs-on: [ ubuntu-latest ]
 
     steps:
       - name: Notify PR Review
         uses: naver/notify-pr-review@v1.2.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          slackBotToken: ${{ secrets.SLACK_BOT_TOKEN }}
