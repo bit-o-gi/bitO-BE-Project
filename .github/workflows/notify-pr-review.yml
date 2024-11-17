@@ -1,19 +1,26 @@
 name: notify pr review
 
 on:
-  pull_request:
-    types: [ reopened ]
+  workflow_dispatch:
+    inputs:
+      input_boolean:
+        description: 'This is a boolean input'
+        required: true
+        default: false
+        type: boolean
+#  pull_request:
+#    types: [ reopened ]
 
 jobs:
   notify:
-    runs-on: [ ubuntu-latest ]
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Print GitHub Secrets (for debugging)
-      run: echo ${{ secrets.GITHUB_TOKEN }} && echo ${{ secrets.SLACK_BOT_TOKEN }}
-      
-    - name: Notify PR Review  
-      uses: naver/notify-pr-review@v1.2.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        slackBotToken: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Print GitHub Secrets (for debugging)
+        run: echo ${{ secrets.GITHUB_TOKEN }} && echo ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Notify PR Review
+        uses: naver/notify-pr-review@v1.2.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          slackBotToken: ${{ secrets.SLACK_BOT_TOKEN }}
