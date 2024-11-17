@@ -3,15 +3,11 @@ name: GITHUB ACTIONS NAME
 on:
   workflow_dispatch:
     inputs:
-      input_choice:
-        description: 'This is a choice input'
+      input_boolean:
+        description: 'This is a boolean input'
         required: true
-        default: 'warning'
-        type: choice
-        options:
-          - info
-          - warning
-          - debug
+        default: false
+        type: boolean
 
 jobs:
   deploy-to-staging:
