@@ -9,8 +9,11 @@ jobs:
     runs-on: [ ubuntu-latest ]
 
     steps:
-      - name: Notify PR Review
-        uses: naver/notify-pr-review@v1.2.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          slackBotToken: ${{ secrets.SLACK_BOT_TOKEN }}
+    - name: Print GitHub Secrets (for debugging)
+      run: echo ${{ secrets.GITHUB_TOKEN }} && echo ${{ secrets.SLACK_BOT_TOKEN }}
+      
+    - name: Notify PR Review  
+      uses: naver/notify-pr-review@v1.2.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        slackBotToken: ${{ secrets.SLACK_BOT_TOKEN }}
