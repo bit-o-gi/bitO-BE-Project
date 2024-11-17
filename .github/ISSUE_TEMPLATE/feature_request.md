@@ -1,4 +1,11 @@
-기능 요청 이슈 템플릿
+---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
+
+---
 
 ## 어떤 기능인가요?
 
