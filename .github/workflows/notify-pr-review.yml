@@ -1,5 +1,4 @@
-# .github/workflows/notify-pr-review.yml
-name: Notify PR Review
+name: notify pr review
 
 on:
   pull_request_review:
