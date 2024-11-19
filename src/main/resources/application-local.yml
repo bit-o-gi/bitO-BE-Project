@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: bit
+  graphql:
+    path: /graphql
+    graphiql:
+      path: /graphiql
+      enabled: true
+    schema:
+      locations: classpath:graphql/**/
+      file-extensions: .graphqls, .gqls
+      printer:
+        enabled: false
+      introspection:
+        enabled: true
+    websocket:
+      connection-init-timeout: 60s
+      path: /websocket-path # 예시 값 지정, 필요에 따라 수정
+    rsocket:
+      mapping: /rsocket-mapping # 예시 값 지정, 필요에 따라 수정
+    cors:
+      allow-credentials: true
+      allowed-headers: "*"
+      allowed-methods: GET,POST
+      allowed-origin-patterns: "*"
+      allowed-origins: "*"
+      exposed-headers: [ ]
+      max-age: 1800s
+  datasource:
+    url: jdbc:mysql://localhost:3306/bitOdb
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+  flyway:
+    enabled: true
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
