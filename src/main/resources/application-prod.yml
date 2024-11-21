@@ -29,7 +29,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/bitOdb
     username: root
-    password: "qkrwnsgudWKd1!"
+    password: qkrwnsgudWKd1!
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
