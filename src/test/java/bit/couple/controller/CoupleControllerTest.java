@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import bit.couple.domain.Couple;
 import bit.couple.dto.CoupleRequest;
-import bit.couple.testFixtures.CoupleFixtures;
 import bit.couple.service.CoupleService;
+import bit.couple.testFixtures.CoupleFixtures;
 import bit.user.domain.User;
 import bit.user.dto.UserDto;
 import bit.user.service.UserService;
@@ -28,81 +28,81 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(controllers = CoupleController.class)
-@ActiveProfiles({"test", "secret"})
+@ActiveProfiles("test")
 class CoupleControllerTest {
 
-  @Autowired
-  private ObjectMapper objectMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-  @Autowired
-  private MockMvc mockMvc;
+    @Autowired
+    private MockMvc mockMvc;
 
-  @MockBean
-  private CoupleService coupleService;
+    @MockBean
+    private CoupleService coupleService;
 
-  @MockBean
-  private UserService userService;
+    @MockBean
+    private UserService userService;
 
-  @Test
-  @DisplayName("커플 생성 성공")
-  void createCouple() throws Exception {
-    // given
-    List<User> users = CoupleFixtures.initialUsers();
+    @Test
+    @DisplayName("커플 생성 성공")
+    void createCouple() throws Exception {
+        // given
+        List<User> users = CoupleFixtures.initialUsers();
 
-    userService.create(UserDto.fromUser(users.get(0)));
-    userService.create(UserDto.fromUser(users.get(1)));
+        userService.create(UserDto.fromUser(users.get(0)));
+        userService.create(UserDto.fromUser(users.get(1)));
 
-    String receiverEmail = users.get(0).getEmail();
-    String senderEmail = users.get(1).getEmail();
+        String receiverEmail = users.get(0).getEmail();
+        String senderEmail = users.get(1).getEmail();
 
-    CoupleRequest coupleRequest = makeCoupleRequest(receiverEmail, senderEmail);
+        CoupleRequest coupleRequest = makeCoupleRequest(receiverEmail, senderEmail);
 
-    // when
-    ResultActions result = mockMvc.perform(
-        post(CoupleController.COUPLE_PATH)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(coupleRequest))
-    );
+        // when
+        ResultActions result = mockMvc.perform(
+                post(CoupleController.COUPLE_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(coupleRequest))
+        );
 
-    // then
-    result.andDo(print())
-        .andExpect(status().isCreated());
-  }
+        // then
+        result.andDo(print())
+                .andExpect(status().isCreated());
+    }
 
-  private CoupleRequest makeCoupleRequest(String receiverEmail, String senderEmail) {
-    return CoupleRequest.builder()
-        .receiverEmail(receiverEmail)
-        .senderEmail(senderEmail)
-        .build();
-  }
+    private CoupleRequest makeCoupleRequest(String receiverEmail, String senderEmail) {
+        return CoupleRequest.builder()
+                .receiverEmail(receiverEmail)
+                .senderEmail(senderEmail)
+                .build();
+    }
 
-  @Test
-  @DisplayName("커플 승인 성공")
-  void approveCouple() throws Exception {
-    // given
-    Couple couple = CoupleFixtures.initialCouple();
-    doNothing().when(coupleService).approveCouple(any());
+    @Test
+    @DisplayName("커플 승인 성공")
+    void approveCouple() throws Exception {
+        // given
+        Couple couple = CoupleFixtures.initialCouple();
+        doNothing().when(coupleService).approveCouple(any());
 
-    // when
-    ResultActions result = mockMvc.perform(
-        put(CoupleController.COUPLE_PATH + "/" + couple.getId()));
+        // when
+        ResultActions result = mockMvc.perform(
+                put(CoupleController.COUPLE_PATH + "/" + couple.getId()));
 
-    // then
-    result.andDo(print()).andExpect(status().isOk());
-  }
+        // then
+        result.andDo(print()).andExpect(status().isOk());
+    }
 
-  @Test
-  @DisplayName("커플 삭제 성공")
-  void deleteCouple() throws Exception {
-    // given
-    Couple couple = CoupleFixtures.initialCouple();
-    doNothing().when(coupleService).deleteCouple(any());
+    @Test
+    @DisplayName("커플 삭제 성공")
+    void deleteCouple() throws Exception {
+        // given
+        Couple couple = CoupleFixtures.initialCouple();
+        doNothing().when(coupleService).deleteCouple(any());
 
-    // when
-    ResultActions result = mockMvc.perform(
-        delete(CoupleController.COUPLE_PATH + "/" + couple.getId()));
+        // when
+        ResultActions result = mockMvc.perform(
+                delete(CoupleController.COUPLE_PATH + "/" + couple.getId()));
 
-    // then
-    result.andDo(print()).andExpect(status().isOk());
-  }
+        // then
+        result.andDo(print()).andExpect(status().isOk());
+    }
 }
