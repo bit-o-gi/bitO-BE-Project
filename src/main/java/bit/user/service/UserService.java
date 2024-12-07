@@ -12,7 +12,7 @@ public interface UserService {
 
     User create(UserCreateRequest userCreateRequest);
 
-    boolean findByEmail(String email);
+    boolean isRegisteredEmail(String email);
 
     void updateCouple(String senderEmail, String receiverEmail, Couple couple);
 }

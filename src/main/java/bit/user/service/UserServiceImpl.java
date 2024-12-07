@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-    public boolean findByEmail(String email) {
+    public boolean isRegisteredEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 

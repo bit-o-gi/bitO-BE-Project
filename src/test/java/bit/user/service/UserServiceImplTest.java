@@ -73,8 +73,8 @@ class UserServiceImplTest {
         String non_exist_email = "pjhwork979@gmail.com";
 
         // when then
-        assertThat(userService.findByEmail(exist_email)).isTrue();
-        assertThat(userService.findByEmail(non_exist_email)).isFalse();
+        assertThat(userService.isRegisteredEmail(exist_email)).isTrue();
+        assertThat(userService.isRegisteredEmail(non_exist_email)).isFalse();
     }
 
     @DisplayName("유저 정보를 저장한다")

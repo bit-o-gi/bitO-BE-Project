@@ -6,12 +6,9 @@ import bit.user.oauth.OauthPlatformStatus;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public class User {
-
     private final Long id;
     private final String email;
     private final String nickName;
