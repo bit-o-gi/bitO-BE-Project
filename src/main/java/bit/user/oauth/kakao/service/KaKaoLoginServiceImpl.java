@@ -69,7 +69,6 @@ public class KaKaoLoginServiceImpl implements OAuthService {
         return response.getBody();
     }
 
-    // Validation 관련 추가함
     private void createUserDomain(JsonNode jsonNode) {
         if (!userService.isRegisteredEmail(KakaoUserInfo.of(jsonNode).getEmail())) {
             userService.create(UserCreateRequest.fromKakaoUser(KakaoUserInfo.of(jsonNode)));

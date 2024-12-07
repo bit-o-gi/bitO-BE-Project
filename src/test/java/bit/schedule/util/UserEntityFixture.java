@@ -1,9 +1,9 @@
 package bit.schedule.util;
 
+import static bit.user.oauth.enums.OauthPlatformStatus.KAKAO;
+
 import bit.user.domain.User;
 import bit.user.entity.UserEntity;
-
-import static bit.user.oauth.OauthPlatformStatus.KAKAO;
 
 public class UserEntityFixture {
     public static UserEntity getNewUserEntity(Long id) {

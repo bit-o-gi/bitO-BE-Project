@@ -1,6 +1,6 @@
 package bit.user.domain;
 
-import static bit.user.oauth.OauthPlatformStatus.KAKAO;
+import static bit.user.oauth.enums.OauthPlatformStatus.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import bit.user.dto.UserCreateRequest;
@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 
 class UserTest {
 
-    @DisplayName("userDto 객체로 생성할 수 있다.")
+    @DisplayName("User 객체를 userDto 객체로 생성할 수 있다.")
     @Test
-    void createTest() {
+    void createUserByDto() {
         // given
         UserCreateRequest userCreateRequest = UserCreateRequest.builder()
                 .email("pjhwork97@gmail.com")

@@ -3,7 +3,7 @@ package bit.user.entity;
 import bit.couple.domain.Couple;
 import bit.schedule.domain.BaseEntity;
 import bit.user.domain.User;
-import bit.user.oauth.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

@@ -2,7 +2,7 @@ package bit.user.domain;
 
 import bit.couple.domain.Couple;
 import bit.user.dto.UserCreateRequest;
-import bit.user.oauth.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformStatus;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
