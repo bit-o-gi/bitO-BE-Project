@@ -16,6 +16,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    public User create(UserCreateRequest userCreateRequest) {
+        return userRepository.save(User.from(userCreateRequest));
+    }
+
     public User getById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -28,10 +32,6 @@ public class UserServiceImpl implements UserService {
 
     public boolean isRegisteredEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
-    }
-
-    public User create(UserCreateRequest userCreateRequest) {
-        return userRepository.save(User.from(userCreateRequest));
     }
 
     public void updateCouple(String senderEmail, String receiverEmail, Couple couple) {
