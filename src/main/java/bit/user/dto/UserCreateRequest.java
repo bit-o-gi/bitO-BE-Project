@@ -46,6 +46,9 @@ public class UserCreateRequest {
                 .id(userInfo.getId())
                 .email(userInfo.getEmail())
                 .nickName(userInfo.getNickName())
+                .gender(userInfo.getGender())
+                .platform(userInfo.getPlatform())
+                .registerDate(userInfo.getRegisterDate())
                 .build();
     }
 }

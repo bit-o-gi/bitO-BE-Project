@@ -1,7 +1,7 @@
 package bit.couple.dto;
 
+import bit.base.BaseCommand;
 import bit.couple.domain.Couple;
-import bit.day.dto.BaseCommand;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

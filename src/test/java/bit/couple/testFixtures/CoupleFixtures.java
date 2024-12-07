@@ -1,7 +1,7 @@
 package bit.couple.testFixtures;
 
 import bit.couple.domain.Couple;
-import bit.couple.domain.CoupleStatus;
+import bit.couple.enums.CoupleStatus;
 import bit.user.domain.User;
 import bit.user.oauth.enums.OauthPlatformStatus;
 import java.lang.reflect.Field;
