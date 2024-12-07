@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 
 class KakaoUserInfoTest {
 
-    @DisplayName("response body로부터 KakaoUserInfo 객체를 생성할 수 있다.")
+    @DisplayName("카카오 서비스에서 주는 response body로부터 KakaoUserInfo 객체를 생성할 수 있다.")
     @Test
-    void kakaoUserInfoOfTest() throws Exception {
+    void createKakaoUserInfoByResponseBody() throws Exception {
         // given
         JsonNode jsonNodeSample = createSampleJsonNode();
 

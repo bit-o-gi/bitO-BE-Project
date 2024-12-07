@@ -29,7 +29,6 @@ class KaKaoLoginServiceImplTest {
     private ObjectMapper objectMapper;
     @InjectMocks
     private KaKaoLoginServiceImpl kaKaoLoginService;
-    ;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +40,7 @@ class KaKaoLoginServiceImplTest {
 
     @DisplayName("Unauthorized 예외가 발생할 경우, HttpClientErrorException 발생한다.")
     @Test
-    void getUserInfo_throwsKaKaoRestTempleProcessingException_onUnauthorized() {
+    void throwHttpClientErrorExceptionExceptionOnUnauthorized() {
         String accessToken = "accessToken";
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers);
@@ -53,9 +52,9 @@ class KaKaoLoginServiceImplTest {
                 .isInstanceOf(HttpClientErrorException.class);
     }
 
-    @DisplayName("카카오에서 받은 responsebody가 null인 경우, 예외를 발생한다")
+    @DisplayName("response body가 null인 경우, KaKaoRestTemplateProcessingException 발생한다")
     @Test
-    void getUserInfo_throwsException_onResponseBodyIsNull() {
+    void throwKaKaoRestTempleProcessingExceptionOnNullResponseBody() {
         // given
         String accessToken = "accsssToken";
 
@@ -75,9 +74,9 @@ class KaKaoLoginServiceImplTest {
                 .hasMessage("카카오 로그인 중 응답이 없습니다.");
     }
 
-    @DisplayName("Json 변환에 실패할 경우, KaKaoRestTemplateProcessingException 발생시킨다.")
+    @DisplayName("Json 변환에 실패할 경우, KaKaoRestTemplateProcessingException 발생한다.")
     @Test
-    void getUserInfo_throwsKaKaoRestTempleProcessingException_onJsonProcessingException() throws Exception {
+    void throwKaKaoRestTemplateProcessingExceptionWhenJsonProcessingIsNotWorking() throws Exception {
         String accessToken = "accessToken";
         String responseBody = "{\"success\":true}";
 

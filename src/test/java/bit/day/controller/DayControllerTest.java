@@ -1,6 +1,5 @@
 package bit.day.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,7 +16,6 @@ import bit.day.service.DayService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -37,9 +35,9 @@ class DayControllerTest {
     @MockBean
     private DayService dayService;
 
-    @DisplayName("디데이 조회 성공")
+    @DisplayName("디데이 조회 시, 정상 조회 성공한다.")
     @Test
-    void getDdaySuccessTest() throws Exception {
+    void successDayRetrieve() throws Exception {
         // given
         Long dayId = 1L;
         Day targetDay = DayTestFixture.createSampleDay();
@@ -54,9 +52,9 @@ class DayControllerTest {
                 .andExpect(jsonPath("$.startDate").value(targetDay.getStartDate().toString()));
     }
 
-    @DisplayName("디데이 생성 성공")
+    @DisplayName("디데이 생성 성공시, 디데이가 정상적으로 생성된다.")
     @Test
-    void createDdaySuccessTest() throws Exception {
+    void successDayCreate() throws Exception {
         // given
         DayRequest testRequest = new DayRequest(1L, "testRequest", LocalDate.of(2024, 11, 12));
         Day targetDay = DayTestFixture.createSampleDay();
@@ -73,9 +71,9 @@ class DayControllerTest {
                 .andExpect(jsonPath("$.startDate").value(targetDay.getStartDate().toString()));
     }
 
-    @DisplayName("디데이 수정 성공")
+    @DisplayName("디데이 수정 요청 시, 디데이가 성공적으로 수정된다.")
     @Test
-    void updateDdaySuccessTest() throws Exception {
+    void successDayUpdate() throws Exception {
         // given
         long id = 1L;
         DayRequest testRequest = new DayRequest(1L, "testRequest", LocalDate.of(2024, 11, 12));

@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
 
 import bit.couple.domain.Couple;
-import bit.couple.dto.CoupleRequest;
 import bit.couple.repository.CoupleRepository;
 import bit.day.domain.Day;
 import bit.day.dto.DayRequest;
@@ -50,7 +49,7 @@ public class DayServiceTest {
 
     @DisplayName("디데이 생성 성공")
     @Test
-    void createDdaySuccessTest() throws Exception {
+    void createDaySuccessTest() throws Exception {
         //given
         Day targetDay = DayTestFixture.createSampleDay();
         DayRequest testRequest = new DayRequest(1L, "testRequest", LocalDate.of(2024, 11, 12));
@@ -66,7 +65,7 @@ public class DayServiceTest {
 
     @DisplayName("디데이 수정 성공")
     @Test
-    void updateDdaySuccessTest() throws Exception {
+    void updateDdaySuccessTest() {
         // given
         Day targetDay = DayTestFixture.createSampleDay();
 
@@ -93,7 +92,7 @@ public class DayServiceTest {
 
     @DisplayName("디데이 삭제 성공")
     @Test
-    void deleteDdaySuccessTest() throws Exception {
+    void deleteDdaySuccessTest() {
         // given
         when(dayRepository.existsById(any())).thenReturn(true);
         // when

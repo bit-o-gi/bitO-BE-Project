@@ -2,18 +2,17 @@ package bit.user.service;
 
 import bit.couple.domain.Couple;
 import bit.user.domain.User;
-import bit.user.dto.UserDto;
-import java.util.List;
+import bit.user.dto.UserCreateRequest;
 
 public interface UserService {
 
-  User getById(long id);
+    User getById(Long id);
 
-  User getByEmail(String email);
+    User getByEmail(String email);
 
-  User create(UserDto userDto);
+    User create(UserCreateRequest userCreateRequest);
 
-  boolean findByEmail(String email);
+    boolean isRegisteredEmail(String email);
 
-  void updateCouple(String senderEmail, String receiverEmail, Couple couple);
+    void updateCouple(String senderEmail, String receiverEmail, Couple couple);
 }

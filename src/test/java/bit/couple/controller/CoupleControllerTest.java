@@ -13,7 +13,7 @@ import bit.couple.dto.CoupleRequest;
 import bit.couple.service.CoupleService;
 import bit.couple.testFixtures.CoupleFixtures;
 import bit.user.domain.User;
-import bit.user.dto.UserDto;
+import bit.user.dto.UserCreateRequest;
 import bit.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -31,6 +31,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles("test")
 class CoupleControllerTest {
 
+    private final String COUPLE_PATH = "/api/v1/couple";
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -44,13 +46,13 @@ class CoupleControllerTest {
     private UserService userService;
 
     @Test
-    @DisplayName("커플 생성 성공")
+    @DisplayName("커플 생성 요청시, 커플이 생성된다.")
     void createCouple() throws Exception {
         // given
         List<User> users = CoupleFixtures.initialUsers();
 
-        userService.create(UserDto.fromUser(users.get(0)));
-        userService.create(UserDto.fromUser(users.get(1)));
+        userService.create(UserCreateRequest.fromUser(users.get(0)));
+        userService.create(UserCreateRequest.fromUser(users.get(1)));
 
         String receiverEmail = users.get(0).getEmail();
         String senderEmail = users.get(1).getEmail();
@@ -59,7 +61,7 @@ class CoupleControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(
-                post(CoupleController.COUPLE_PATH)
+                post(COUPLE_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(coupleRequest))
         );
@@ -77,7 +79,7 @@ class CoupleControllerTest {
     }
 
     @Test
-    @DisplayName("커플 승인 성공")
+    @DisplayName("커플 승인 요청 시, 커플이 승인된다.")
     void approveCouple() throws Exception {
         // given
         Couple couple = CoupleFixtures.initialCouple();
@@ -85,14 +87,14 @@ class CoupleControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(
-                put(CoupleController.COUPLE_PATH + "/" + couple.getId()));
+                put(COUPLE_PATH + "/" + couple.getId()));
 
         // then
         result.andDo(print()).andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("커플 삭제 성공")
+    @DisplayName("커플 삭제 요청 시, 커플이 삭제된다 (hard delete)")
     void deleteCouple() throws Exception {
         // given
         Couple couple = CoupleFixtures.initialCouple();
@@ -100,7 +102,7 @@ class CoupleControllerTest {
 
         // when
         ResultActions result = mockMvc.perform(
-                delete(CoupleController.COUPLE_PATH + "/" + couple.getId()));
+                delete(COUPLE_PATH + "/" + couple.getId()));
 
         // then
         result.andDo(print()).andExpect(status().isOk());
