@@ -29,9 +29,9 @@ public class UserServiceImpl implements UserService {
     return userRepository.findByEmail(email).isPresent();
   }
 
-  public User create(UserDto userDto) {
-    return userRepository.save(User.from(userDto));
-  }
+    public User create(UserCreateRequest userCreateRequest) {
+        return userRepository.save(User.from(userCreateRequest));
+    }
 
   @Transactional
   public void updateCouple(String senderEmail, String receiverEmail, Couple couple) {

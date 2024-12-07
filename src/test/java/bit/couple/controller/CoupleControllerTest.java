@@ -13,7 +13,7 @@ import bit.couple.dto.CoupleRequest;
 import bit.couple.service.CoupleService;
 import bit.couple.testFixtures.CoupleFixtures;
 import bit.user.domain.User;
-import bit.user.dto.UserDto;
+import bit.user.dto.UserCreateRequest;
 import bit.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -49,8 +49,8 @@ class CoupleControllerTest {
         // given
         List<User> users = CoupleFixtures.initialUsers();
 
-        userService.create(UserDto.fromUser(users.get(0)));
-        userService.create(UserDto.fromUser(users.get(1)));
+        userService.create(UserCreateRequest.fromUser(users.get(0)));
+        userService.create(UserCreateRequest.fromUser(users.get(1)));
 
         String receiverEmail = users.get(0).getEmail();
         String senderEmail = users.get(1).getEmail();

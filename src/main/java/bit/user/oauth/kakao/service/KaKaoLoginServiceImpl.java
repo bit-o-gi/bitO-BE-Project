@@ -1,6 +1,6 @@
 package bit.user.oauth.kakao.service;
 
-import bit.user.dto.UserDto;
+import bit.user.dto.UserCreateRequest;
 import bit.user.exception.KaKaoRestTemplateProcessingException;
 import bit.user.oauth.kakao.domain.KakaoUserInfo;
 import bit.user.oauth.port.OAuthService;
@@ -72,7 +72,7 @@ public class KaKaoLoginServiceImpl implements OAuthService {
     // Validation 관련 추가함
     private void createUserDomain(JsonNode jsonNode) {
         if (!userService.findByEmail(KakaoUserInfo.of(jsonNode).getEmail())) {
-            userService.create(UserDto.fromKakaoUser(KakaoUserInfo.of(jsonNode)));
+            userService.create(UserCreateRequest.fromKakaoUser(KakaoUserInfo.of(jsonNode)));
         }
     }
 }

@@ -1,7 +1,7 @@
 package bit.user.domain;
 
 import bit.couple.domain.Couple;
-import bit.user.dto.UserDto;
+import bit.user.dto.UserCreateRequest;
 import bit.user.oauth.OauthPlatformStatus;
 import java.time.LocalDateTime;
 import lombok.Builder;
@@ -32,15 +32,15 @@ public class User {
     this.couple = couple;
   }
 
-  public static User from(UserDto userDto) {
-    return User.builder()
-        .email(userDto.getEmail())
-        .nickName(userDto.getNickName())
-        .gender(userDto.getGender())
-        .platform(userDto.getPlatform())
-        .registerDate(userDto.getRegisterDate())
-        .build();
-  }
+    public static User from(UserCreateRequest userCreateRequest) {
+        return User.builder()
+                .email(userCreateRequest.getEmail())
+                .nickName(userCreateRequest.getNickName())
+                .gender(userCreateRequest.getGender())
+                .platform(userCreateRequest.getPlatform())
+                .registerDate(userCreateRequest.getRegisterDate())
+                .build();
+    }
 
   public User updateCouple(Couple couple) {
     return User.builder()
