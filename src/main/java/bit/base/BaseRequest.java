@@ -1,4 +1,4 @@
-package bit.day.dto;
+package bit.base;
 
 public interface BaseRequest<T> {
     BaseCommand<T> toCommand();
