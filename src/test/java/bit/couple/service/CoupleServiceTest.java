@@ -2,7 +2,7 @@ package bit.couple.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import bit.couple.dto.CoupleRequest;
+import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.testFixtures.CoupleFixtures;
 import bit.user.domain.User;
 import bit.user.dto.UserCreateRequest;
@@ -40,8 +40,8 @@ class CoupleServiceTest {
         String receiverEmail = users.get(1).getEmail();
 
         // when
-        CoupleRequest coupleRequest = new CoupleRequest(senderEmail, receiverEmail);
-        coupleService.createCouple(coupleRequest.toCommand());
+        CoupleCreateRequest coupleCreateRequest = new CoupleCreateRequest(senderEmail, receiverEmail);
+        coupleService.createCouple(coupleCreateRequest.toCommand());
         User user = userService.getByEmail(senderEmail);
 
         // then

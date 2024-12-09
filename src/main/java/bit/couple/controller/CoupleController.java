@@ -1,6 +1,6 @@
 package bit.couple.controller;
 
-import bit.couple.dto.CoupleRequest;
+import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.service.CoupleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,8 +22,8 @@ public class CoupleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createCouple(@RequestBody CoupleRequest coupleRequest) {
-        coupleService.createCouple(coupleRequest.toCommand());
+    public void createCouple(@RequestBody CoupleCreateRequest coupleCreateRequest) {
+        coupleService.createCouple(coupleCreateRequest.toCommand());
     }
 
     @PutMapping("/{coupleId}")

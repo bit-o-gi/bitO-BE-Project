@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class CoupleCommand implements BaseCommand<Couple> {
-
-    private final String sender;
-    private final String receiver;
-
+public class CoupleCreateCommand implements BaseCommand<Couple> {
+    private final String senderEmail;
+    private final String receiverEmail;
 }

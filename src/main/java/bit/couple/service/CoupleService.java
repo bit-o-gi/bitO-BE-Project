@@ -1,7 +1,7 @@
 package bit.couple.service;
 
 import bit.couple.domain.Couple;
-import bit.couple.dto.CoupleCommand;
+import bit.couple.dto.CoupleCreateCommand;
 import bit.couple.enums.CoupleStatus;
 import bit.couple.exception.CoupleException.CoupleNotFoundException;
 import bit.couple.repository.CoupleRepository;
@@ -18,9 +18,9 @@ public class CoupleService {
     private final UserService userService;
 
     @Transactional
-    public void createCouple(CoupleCommand command) {
-        String sender = command.getSender();
-        String receiver = command.getReceiver();
+    public void createCouple(CoupleCreateCommand command) {
+        String sender = command.getSenderEmail();
+        String receiver = command.getReceiverEmail();
 
         Couple savedCouple = coupleRepository.save(
                 Couple.of(sender, receiver, CoupleStatus.CREATING)

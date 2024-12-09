@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import bit.couple.domain.Couple;
-import bit.couple.dto.CoupleRequest;
+import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.service.CoupleService;
 import bit.couple.testFixtures.CoupleFixtures;
 import bit.user.domain.User;
@@ -57,13 +57,13 @@ class CoupleControllerTest {
         String receiverEmail = users.get(0).getEmail();
         String senderEmail = users.get(1).getEmail();
 
-        CoupleRequest coupleRequest = makeCoupleRequest(receiverEmail, senderEmail);
+        CoupleCreateRequest coupleCreateRequest = makeCoupleRequest(receiverEmail, senderEmail);
 
         // when
         ResultActions result = mockMvc.perform(
                 post(COUPLE_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(coupleRequest))
+                        .content(objectMapper.writeValueAsString(coupleCreateRequest))
         );
 
         // then
@@ -71,8 +71,8 @@ class CoupleControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    private CoupleRequest makeCoupleRequest(String receiverEmail, String senderEmail) {
-        return CoupleRequest.builder()
+    private CoupleCreateRequest makeCoupleRequest(String receiverEmail, String senderEmail) {
+        return CoupleCreateRequest.builder()
                 .receiverEmail(receiverEmail)
                 .senderEmail(senderEmail)
                 .build();
