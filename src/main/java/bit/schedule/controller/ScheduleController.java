@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping("/{scheduleId}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "스케줄 조회 API", description = "스케줄을 조회합니다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
@@ -29,6 +31,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/user/{userId}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "사용자별 스케줄 조회 API", description = "사용자별 스케줄을 조회합니다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
@@ -39,6 +42,7 @@ public class ScheduleController {
     }
 
     @GetMapping("/couple/{coupleId}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "커플별 스케줄 조회 API", description = "커플별 스케줄을 조회합니다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
@@ -49,6 +53,7 @@ public class ScheduleController {
     }
 
     @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "스케줄 생성 API", description = "스케줄을 생성합니다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
@@ -60,6 +65,7 @@ public class ScheduleController {
     }
 
     @PutMapping("/{scheduleId}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "스케줄 수정 API", description = "스케줄을 수정합니다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
@@ -71,6 +77,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/{scheduleId}")
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "스케줄 삭제 API", description = "스케줄을 삭제합니다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
