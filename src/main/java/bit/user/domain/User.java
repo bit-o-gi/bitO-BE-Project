@@ -3,11 +3,15 @@ package bit.user.domain;
 import bit.couple.domain.Couple;
 import bit.user.dto.UserCreateRequest;
 import bit.user.oauth.enums.OauthPlatformStatus;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
+@Builder
+@AllArgsConstructor
 public class User {
     private final Long id;
     private final String email;
@@ -16,18 +20,6 @@ public class User {
     private final OauthPlatformStatus platform;
     private final LocalDateTime registerDate;
     private final Couple couple;
-
-    @Builder
-    public User(Long id, String email, String nickName, String gender, OauthPlatformStatus platform,
-                LocalDateTime registerDate, Couple couple) {
-        this.id = id;
-        this.email = email;
-        this.nickName = nickName;
-        this.gender = gender;
-        this.platform = platform;
-        this.registerDate = registerDate;
-        this.couple = couple;
-    }
 
     public static User from(UserCreateRequest userCreateRequest) {
         return User.builder()

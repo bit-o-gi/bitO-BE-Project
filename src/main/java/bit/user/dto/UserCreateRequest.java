@@ -3,9 +3,10 @@ package bit.user.dto;
 import bit.user.domain.User;
 import bit.user.oauth.enums.OauthPlatformStatus;
 import bit.user.oauth.kakao.domain.KakaoUserInfo;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDateTime;
 
 @Getter
 public class UserCreateRequest {
