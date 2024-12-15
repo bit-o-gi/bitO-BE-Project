@@ -1,19 +1,20 @@
 package bit.couple.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import bit.couple.dto.CoupleRequest;
+import bit.couple.dto.CoupleCreateRequest;
 import bit.couple.testFixtures.CoupleFixtures;
 import bit.user.domain.User;
-import bit.user.dto.UserDto;
+import bit.user.dto.UserCreateRequest;
 import bit.user.service.UserServiceImpl;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -33,15 +34,15 @@ class CoupleServiceTest {
         // given
         List<User> users = CoupleFixtures.initialUsers();
 
-        userService.create(UserDto.fromUser(users.get(0)));
-        userService.create(UserDto.fromUser(users.get(1)));
+        userService.create(UserCreateRequest.fromUser(users.get(0)));
+        userService.create(UserCreateRequest.fromUser(users.get(1)));
 
         String senderEmail = users.get(0).getEmail();
         String receiverEmail = users.get(1).getEmail();
 
         // when
-        CoupleRequest coupleRequest = new CoupleRequest(senderEmail, receiverEmail);
-        coupleService.createCouple(coupleRequest.toCommand());
+        CoupleCreateRequest coupleCreateRequest = new CoupleCreateRequest(senderEmail, receiverEmail);
+        coupleService.createCouple(coupleCreateRequest.toCommand());
         User user = userService.getByEmail(senderEmail);
 
         // then

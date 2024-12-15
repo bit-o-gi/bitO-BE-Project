@@ -1,6 +1,7 @@
 package bit.couple.domain;
 
-import bit.schedule.domain.BaseEntity;
+import bit.base.BaseEntity;
+import bit.couple.enums.CoupleStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

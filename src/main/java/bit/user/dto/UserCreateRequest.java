@@ -1,14 +1,15 @@
 package bit.user.dto;
 
 import bit.user.domain.User;
-import bit.user.oauth.OauthPlatformStatus;
+import bit.user.oauth.enums.OauthPlatformStatus;
 import bit.user.oauth.kakao.domain.KakaoUserInfo;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
-public class UserDto {
+public class UserCreateRequest {
     private final Long id;
 
     private final String email;
@@ -22,8 +23,8 @@ public class UserDto {
     private final LocalDateTime registerDate;
 
     @Builder
-    public UserDto(Long id, String email, String nickName, String gender, OauthPlatformStatus platform,
-                   LocalDateTime registerDate) {
+    public UserCreateRequest(Long id, String email, String nickName, String gender, OauthPlatformStatus platform,
+                             LocalDateTime registerDate) {
         this.id = id;
         this.email = email;
         this.nickName = nickName;
@@ -32,8 +33,8 @@ public class UserDto {
         this.registerDate = registerDate;
     }
 
-    public static UserDto fromKakaoUser(KakaoUserInfo info) {
-        return UserDto.builder()
+    public static UserCreateRequest fromKakaoUser(KakaoUserInfo info) {
+        return UserCreateRequest.builder()
                 .email(info.getEmail())
                 .nickName(info.getNickname())
                 .platform(OauthPlatformStatus.KAKAO)
@@ -41,11 +42,14 @@ public class UserDto {
                 .build();
     }
 
-    public static UserDto fromUser(User userInfo) {
-        return UserDto.builder()
+    public static UserCreateRequest fromUser(User userInfo) {
+        return UserCreateRequest.builder()
                 .id(userInfo.getId())
                 .email(userInfo.getEmail())
                 .nickName(userInfo.getNickName())
+                .gender(userInfo.getGender())
+                .platform(userInfo.getPlatform())
+                .registerDate(userInfo.getRegisterDate())
                 .build();
     }
 }

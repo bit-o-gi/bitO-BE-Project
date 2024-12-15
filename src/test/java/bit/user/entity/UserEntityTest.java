@@ -1,8 +1,7 @@
 package bit.user.entity;
 
-import static bit.user.oauth.OauthPlatformStatus.*;
+import static bit.user.oauth.enums.OauthPlatformStatus.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import bit.user.domain.User;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 class UserEntityTest {
 
-    @DisplayName("User 객체를 UserEntity로 변환한다.")
+    @DisplayName("User 객체를 UserJpaEntity로 변환할 수 있다.")
     @Test
-    void fromTest() {
+    void fromUserToUserJpaEntity() {
         // given
         User user = User.builder()
                 .id(1L)
