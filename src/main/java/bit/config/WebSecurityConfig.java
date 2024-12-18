@@ -42,6 +42,8 @@ public class WebSecurityConfig {
                 .anyRequest().permitAll()
                 .and()
                 .csrf().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .headers()
                 .frameOptions().deny()
                 .and()
