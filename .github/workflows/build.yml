@@ -28,9 +28,6 @@ jobs:
         run: ./gradlew build -x test
 
       - name: Check if JAR file exists
-        run: ls -l ./build/libs/
-
-      - name: Check if JAR file exists
         run: |
           if [ -f ./build/libs/BitO-1.0.0.jar ]; then
             echo "JAR file exists."
@@ -38,12 +35,6 @@ jobs:
             echo "JAR file does not exist."
             exit 1
           fi
-
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Copy jar file to remote
         uses: appleboy/scp-action@master
         with:
@@ -53,6 +44,11 @@ jobs:
           source: "./build/libs/BitO-1.0.0.jar"
           target: "/home/ec2-user/BitO-1.0.0.jar"
 
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to dev
         uses: appleboy/ssh-action@master
         with:
