@@ -32,7 +32,7 @@ jobs:
 
       - name: Check if JAR file exists
         run: |
-          if [ -f ./build/libs/bit-1.0.0.jar ]; then
+          if [ -f ./build/libs/BitO-1.0.0.jar ]; then
             echo "JAR file exists."
           else
             echo "JAR file does not exist."
@@ -50,8 +50,8 @@ jobs:
           username: ec2-user
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.SERVER_KEY }}
-          source: "./build/libs/bit-1.0.0.jar"
-          target: "/home/ec2-user/bit-1.0.0.jar"
+          source: "./build/libs/BitO-1.0.0.jar"
+          target: "/home/ec2-user/BitO-1.0.0.jar"
 
       - name: Deploy to dev
         uses: appleboy/ssh-action@master
