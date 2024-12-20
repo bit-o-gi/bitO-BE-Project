@@ -30,6 +30,16 @@ jobs:
       - name: Check if JAR file exists
         run: ls -l ./build/libs/
 
+      - name: Check if JAR file exists
+        run: |
+          if [ -f ./build/libs/bit-1.0.0.jar ]; then
+            echo "JAR file exists."
+          else
+            echo "JAR file does not exist."
+            exit 1
+          fi
+
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
