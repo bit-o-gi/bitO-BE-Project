@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,12 +24,14 @@ import java.util.List;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = CoupleController.class)
 @ActiveProfiles("test")
+@WithMockUser
 class CoupleControllerTest {
 
     private final String COUPLE_PATH = "/api/v1/couple";
@@ -59,14 +63,14 @@ class CoupleControllerTest {
         CoupleCreateRequest coupleCreateRequest = makeCoupleRequest(receiverEmail, senderEmail);
 
         // when
-        ResultActions result = mockMvc.perform(
-                post(COUPLE_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(coupleCreateRequest))
-        );
-
         // then
-        result.andDo(print())
+        mockMvc.perform(
+                        post(COUPLE_PATH)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(coupleCreateRequest))
+                                .with(csrf())
+
+                ).andDo(print())
                 .andExpect(status().isCreated());
     }
 
@@ -85,11 +89,11 @@ class CoupleControllerTest {
         doNothing().when(coupleService).approveCouple(any());
 
         // when
-        ResultActions result = mockMvc.perform(
-                put(COUPLE_PATH + "/" + couple.getId()));
-
-        // then
-        result.andDo(print()).andExpect(status().isOk());
+        mockMvc.perform(
+                        put(COUPLE_PATH + "/" + couple.getId())
+                                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -99,11 +103,10 @@ class CoupleControllerTest {
         Couple couple = CoupleFixtures.initialCouple();
         doNothing().when(coupleService).deleteCouple(any());
 
-        // when
-        ResultActions result = mockMvc.perform(
-                delete(COUPLE_PATH + "/" + couple.getId()));
-
-        // then
-        result.andDo(print()).andExpect(status().isOk());
+        // when //then
+        mockMvc.perform(
+                        delete(COUPLE_PATH + "/" + couple.getId()).with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
